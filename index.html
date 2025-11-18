@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria Fotogràfica</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inici</a></li>
+                <li><a href="#" data-section="Retrat">Retrat</a></li>
+                <li><a href="#" data-section="Paisatge">Paisatge</a></li>
+                <li><a href="#" data-section="Nocturnes">Nocturnes</a></li>
+                <li><a href="#" id="about-link">Sobre l'Autor</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="gallery">
+            <div class="grid">
+                <!-- Les imatges es carregaran aquí mitjançant JavaScript -->
+            </div>
+            <div id="full-image-view">
+                <img id="full-image" src="" alt="">
+                <div id="image-name"></div>
+                <button id="prev-image">Anterior</button>
+                <button id="next-image">Següent</button>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>Sobre l'Autor</h2>
+            <div id="about-content">
+                <!-- El contingut de about.txt es carregarà aquí mitjançant JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Galeria Fotogràfica</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
