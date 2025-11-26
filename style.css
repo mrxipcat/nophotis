@@ -38,15 +38,37 @@ main {
     gap: 10px;
 }
 
+/* Modificacions per centrar i maximitzar les imatges */
+.grid-item {
+    position: relative;
+    display: flex;
+    justify-content: center; /* Centrar horizontalment */
+    align-items: center; /* Centrar verticalment */
+    overflow: hidden; /* Important per evitar que la imatge sobresurti */
+}
+
 #gallery .grid img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover; /* Important per maximitzar i retallar si cal */
     cursor: pointer;
     transition: transform 0.3s ease;
 }
 
 #gallery .grid img:hover {
     transform: scale(1.05);
+}
+
+/* Estils per al nom del fitxer sota cada imatge del grid */
+.image-name-grid {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    color: white;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2px 5px;
+    border-radius: 3px;
 }
 
 #full-image-view {
@@ -59,29 +81,56 @@ main {
     background-color: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+#full-image-container {
+    position: relative;
+    width: 90%; /* Canviat max-width per width */
+    height: 90vh; /* Canviat max-height per height i usant vh */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 #full-image {
-    max-width: 90%;
-    max-height: 90%;
-    margin-top: 5%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 #image-name {
     position: absolute;
     bottom: 10px;
-    left: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     color: white;
     font-size: 16px;
+    text-align: center;
 }
 
-#full-image-view button {
-    background-color: #333;
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
     border: none;
-    padding: 10px 20px;
-    margin: 10px;
+    padding: 10px 15px;
     cursor: pointer;
+    font-size: 20px;
+    border-radius: 5px;
+}
+
+#prev-image {
+    left: 10px;
+}
+
+#next-image {
+    right: 10px;
 }
 
 #about {

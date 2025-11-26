@@ -1,3 +1,106 @@
+const imageLists = {
+    "Colors": [
+	"Black.jpg",
+	"Blond.jpg",
+	"Blue.jpg",
+	"Dark.jpg",
+	"DarkBlue.jpg",
+	"Green.jpg",
+	"Grey.jpg",
+	"Maroon.jpg",
+	"Orange.jpg",
+	"Red.jpg",
+	"White.jpg",
+	"Yellow.jpg"
+    ],
+    "Landscapes": [
+        "Aurora at Iceland.jpg",
+        "Cala Roca Grossa.jpg",
+	"Milky Way from Ulldeter.jpg"
+    ],
+    "Studio": [
+"Andrea 1.jpg",
+"Andrea 2.jpg",
+"Andrea 5.jpg",
+"Andrea 6.jpg",
+"Andrea 7.jpg",
+"Carlota 2.jpg",
+"Charlie 1.jpg",
+"Charlie 2.jpg",
+"Charlie 3.jpg",
+"Charlie 4.jpg",
+"Charlie 5.jpg",
+"Elena 2.jpg",
+"Enya 2.jpg",
+"Eva 3.jpg",
+"Eva 7.jpg",
+"Eva 8.jpg",
+"Evgenia 1.jpg",
+"Evgenia 3.jpg",
+"Fery 1.jpg",
+"Fery 3.jpg",
+"Fery 4.jpg",
+"Fery 5.jpg",
+"Fery 6.jpg",
+"Fery 7.jpg",
+"Jelena 1.jpg",
+"Jelena 10.jpg",
+"Jelena 11.jpg",
+"Jelena 2.jpg",
+"Jelena 3.jpg",
+"Jelena 5.jpg",
+"Jelena 6.jpg",
+"Jelena 7.jpg",
+"Jelena 8.jpg",
+"Jelena 9.jpg",
+"Julia 2.jpg",
+"Julia 4.jpg",
+"Mary 1.jpg",
+"Mary 2.jpg",
+"Mary 3.jpg",
+"Mary 4.jpg",
+"Mary 5.jpg",
+"Paula 1.jpg",
+"Paula 3.jpg",
+"Paula 4.jpg",
+"Sofia 1.jpg",
+"Vika 1.jpg",
+"Vika 2.jpg",
+"Vika 3.jpg",
+"Vika 4.jpg"
+],
+    "BlackWhite": [
+"Andrea 3.jpg",
+"Andrea 4.jpg",
+"Carlota 1.jpg",
+"Carlota 3.jpg",
+"Elena 1.jpg",
+"Elena 3.jpg",
+"Enya 1.jpg",
+"Enya 3.jpg",
+"Enya 4.jpg",
+"Eva 1.jpg",
+"Eva 2.jpg",
+"Eva 4.jpg",
+"Eva 5.jpg",
+"Eva 6.jpg",
+"Evgenia 2.jpg",
+"Evgenia 4.jpg",
+"Evgenia 5.jpg",
+"Fery 2.jpg",
+"Jelena 4.jpg",
+"Julia 1.jpg",
+"Julia 3.jpg",
+"Mary 6.jpg",
+"Paula 2.jpg",
+"Sofia 2.jpg",
+"Sofia 3.jpg",
+"Vika 5.jpg",
+"Vika 6.jpg"
+],
+    "M": []
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     const gallery = document.getElementById('gallery');
     const grid = document.querySelector('.grid');
@@ -9,75 +112,58 @@ document.addEventListener('DOMContentLoaded', function () {
     const aboutLink = document.getElementById('about-link');
     const aboutSection = document.getElementById('about');
     const aboutContent = document.getElementById('about-content');
+    const fullImageContainer = document.getElementById('full-image-container');
 
-    let currentSection = 'Retrat'; // Secció per defecte
+    let currentSection = 'Colors';
     let images = [];
     let currentImageIndex = 0;
 
-    // Funció per carregar imatges d'una secció
     function loadImages(section) {
         currentSection = section;
-        grid.innerHTML = ''; // Netejar el grid
-        images = []; // Buidar l'array d'imatges
-        fetchImages(section);
+        grid.innerHTML = '';
+        images = [];
+        fullImageView.style.display = 'none';
+        loadImagesFromList(section);
     }
 
-    // Funció per obtenir la llista d'imatges del servidor
-    function fetchImages(section) {
-        const imagePath = `img/${section}/`;
-        fetch(imagePath) // Intenta carregar un fitxer "index.html" a la carpeta
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`No s'ha trobat la carpeta: ${section}. Assegura't que existeix i conté un index.html.`);
-                }
-                // Si troba un index.html, no fem res, ja que l'important és carregar les imatges directament
-            })
-            .catch(error => {
-                console.error(error);
-            })
-            .finally(() => {
-                // Carreguem les imatges directament, independentment de si hi ha un index.html
-                loadImagesFromDirectory(imagePath);
-            });
+
+function loadImagesFromList(section) {
+
+    const imagePath = `img/${section}/`;
+    const imageList = imageLists[section];
+
+    if (imageList && imageList.length > 0) { // Verifica si la llista existeix i no està buida
+        imageList.forEach(imageFile => {
+            imageUrl = imagePath + imageFile;
+	    images.push(imageUrl);
+            addImageToGrid(imageUrl);
+        });
+    } else {
+        // Si la categoria no existeix o no té imatges, mostra un missatge
+        grid.textContent = 'No hi ha imatges disponibles per a aquesta categoria.';
+        console.warn('Categoria no trobada o sense imatges:', category);
     }
+}
 
-    function loadImagesFromDirectory(imagePath) {
-        // Aquesta funció simula la lectura dels fitxers jpg directament (en un entorn real, necessitaries una API al servidor)
-        // Com que no podem llistar els fitxers del directori directament al client,
-        // farem una petició per a cada possible nom de fitxer i gestionarem els errors.
 
-        const maxImages = 100; // Màxim d'imatges per evitar bucles infinits
-        let loadedImages = 0;
-
-        for (let i = 1; i <= maxImages; i++) {
-            const imageUrl = `${imagePath}foto${i}.jpg`; // Nomenclatura simple per a les imatges
-            const img = new Image();
-            img.src = imageUrl;
-
-            img.onload = () => {
-                images.push(imageUrl);
-                addImageToGrid(imageUrl);
-                loadedImages++;
-                if (loadedImages === 1) {
-                    // Mostrar la primera imatge per defecte
-                    showFullImage(0);
-                }
-            };
-
-            img.onerror = () => {
-                // Si no es troba la imatge, simplement ignorem l'error i continuem
-                console.log(`Imatge no trobada: ${imageUrl}`);
-            };
-        }
-    }
 
     // Funció per afegir una imatge al grid
     function addImageToGrid(imageUrl) {
+        const gridItem = document.createElement('div');
+        gridItem.classList.add('grid-item');
+
         const img = document.createElement('img');
         img.src = imageUrl;
         img.alt = imageUrl.split('/').pop().split('.')[0];
         img.addEventListener('click', () => showFullImage(images.indexOf(imageUrl)));
-        grid.appendChild(img);
+
+        const imageNameGrid = document.createElement('div');
+        imageNameGrid.classList.add('image-name-grid');
+        imageNameGrid.textContent = imageUrl.split('/').pop().split('.')[0];
+
+        gridItem.appendChild(img);
+        gridItem.appendChild(imageNameGrid);
+        grid.appendChild(gridItem);
     }
 
     // Funció per mostrar la imatge a pantalla completa
@@ -85,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
         currentImageIndex = index;
         fullImage.src = images[index];
         imageName.textContent = images[index].split('/').pop().split('.')[0];
-        fullImageView.style.display = 'block';
+        fullImageView.style.display = 'flex';
     }
 
     // Funció per mostrar la imatge anterior
@@ -100,6 +186,11 @@ document.addEventListener('DOMContentLoaded', function () {
         showFullImage(currentImageIndex);
     }
 
+    // Funció per tancar la vista en gran
+    function closeFullImageView() {
+        fullImageView.style.display = 'none';
+    }
+
     // Event listeners per a la navegació
     prevImageButton.addEventListener('click', showPreviousImage);
     nextImageButton.addEventListener('click', showNextImage);
@@ -107,13 +198,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event listener per tancar la vista a pantalla completa al fer clic a la pantalla
     fullImageView.addEventListener('click', (event) => {
         if (event.target === fullImageView) {
-            fullImageView.style.display = 'none';
+            closeFullImageView();
         }
     });
 
-    // Event listeners per a la navegació amb tecles
+    // Event listener per a la tecla ESC
     document.addEventListener('keydown', function (event) {
-        if (fullImageView.style.display === 'block') {
+        if (event.key === 'Escape') {
+            closeFullImageView();
+        }
+        if (fullImageView.style.display === 'flex') {
             if (event.key === 'ArrowLeft') {
                 showPreviousImage();
             } else if (event.key === 'ArrowRight') {
@@ -128,33 +222,19 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             const section = this.dataset.section;
             loadImages(section);
-            aboutSection.style.display = 'none'; // Ocultar la secció "Sobre l'Autor"
-            gallery.style.display = 'block';     // Mostrar la galeria
+            aboutSection.style.display = 'none';
+            gallery.style.display = 'block';
         });
     });
 
     // Event listener per mostrar la secció "Sobre l'Autor"
     aboutLink.addEventListener('click', function (event) {
         event.preventDefault();
-        gallery.style.display = 'none'; // Ocultar la galeria
-        aboutSection.style.display = 'block'; // Mostrar la secció "Sobre l'Autor"
-        loadAboutContent();
+        gallery.style.display = 'none';
+        fullImageView.style.display = 'none';
+        aboutSection.style.display = 'block';
     });
-
-    // Funció per carregar el contingut de "about.txt"
-    function loadAboutContent() {
-        fetch('about.txt')
-            .then(response => response.text())
-            .then(data => {
-                aboutContent.textContent = data;
-            })
-            .catch(error => {
-                console.error('Error al carregar about.txt:', error);
-                aboutContent.textContent = 'No s\'ha pogut carregar la informació sobre l\'autor.';
-            });
-    }
 
     // Carregar la secció per defecte al carregar la pàgina
     loadImages(currentSection);
 });
-

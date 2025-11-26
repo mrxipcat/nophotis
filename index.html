@@ -11,11 +11,12 @@
     <header>
         <nav>
             <ul>
-                <li><a href="index.html">Inici</a></li>
-                <li><a href="#" data-section="Retrat">Retrat</a></li>
-                <li><a href="#" data-section="Paisatge">Paisatge</a></li>
-                <li><a href="#" data-section="Nocturnes">Nocturnes</a></li>
-                <li><a href="#" id="about-link">Sobre l'Autor</a></li>
+                <li><a href="#" data-section="Colors">Colors</a></li>
+                <li><a href="#" data-section="Landscapes">Landscapes</a></li>
+                <li><a href="#" data-section="Studio">Studio</a></li>
+                <li><a href="#" data-section="BlackWhite">Black&White</a></li>
+                <li><a href="#" data-section="nothing"></a></li>
+                <li><a href="#" id="about-link">No Photis!</a></li>
             </ul>
         </nav>
     </header>
@@ -26,23 +27,30 @@
                 <!-- Les imatges es carregaran aquí mitjançant JavaScript -->
             </div>
             <div id="full-image-view">
-                <img id="full-image" src="" alt="">
-                <div id="image-name"></div>
-                <button id="prev-image">Anterior</button>
-                <button id="next-image">Següent</button>
+                <button id="prev-image" class="nav-button">&lt;</button>
+                <div id="full-image-container">
+                    <img id="full-image" src="" alt="">
+                    <div id="image-name"></div>
+                </div>
+                <button id="next-image" class="nav-button">&gt;</button>
             </div>
         </section>
 
         <section id="about">
-            <h2>Sobre l'Autor</h2>
+            <h2>Fotògraf (Photographer)</h2>
             <div id="about-content">
-                <!-- El contingut de about.txt es carregarà aquí mitjançant JavaScript -->
+                <a href="https://www.instagram.com/no.photis" target="_blank"> <img src="img/about_image.jpg" alt="ImatgeAutor" style="width:150px; float:left; margin-right:10px;"> </a>
+                <p>Fotògraf des de ben petit, capturant instants !<br>
+  Instagram: <a href="https://www.instagram.com/no.photis" target="_blank">@no.photis</a>, 
+  <a href="https://www.instagram.com/no.photis.studio" target="_blank">@no.photis.studio</a>
+</p>
+                <div style="clear:both;"></div>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 Galeria Fotogràfica</p>
+        <p>&copy;2025 All rights reserved. Contact via Instagram for inquiries.</p>
     </footer>
 
     <script src="script.js"></script>
