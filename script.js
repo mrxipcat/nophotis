@@ -29,7 +29,6 @@ const imageLists = {
 "Fecamp.jpg",
 "Holand from plane.jpg",
 "Linx a Norway.jpg",
-"llistat.txt",
 "Lloret.jpg",
 "Lofoten 1.jpg",
 "Lofoten 2.jpg",
