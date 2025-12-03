@@ -112,11 +112,17 @@ main {
     text-align: center;
 }
 
-.nav-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
+
+.nav-button img {
+    width: 50px; /* Ajusta segons necessitis */
+    height: 50px; /* Ajusta segons necessitis */
+    vertical-align: middle; /* Alinea verticalment la imatge */
+}
+
+
+#prev-image {
+    left: 10px;
+    background-color: transparent; /* Fons transparent */
     color: white;
     border: none;
     padding: 10px 15px;
@@ -125,13 +131,24 @@ main {
     border-radius: 5px;
 }
 
-#prev-image {
-    left: 10px;
-}
 
 #next-image {
     right: 10px;
+    background-color: transparent; /* Fons transparent */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    border-radius: 5px;
 }
+
+
+#prev-image:hover,
+#next-image:hover {
+    filter: invert(1); /* Inverteix els colors de la imatge al passar el cursor 
+}
+
 
 #about {
     display: none;

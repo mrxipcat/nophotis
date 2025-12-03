@@ -173,6 +173,14 @@ function loadImagesFromList(section) {
     const imageList = imageLists[section];
 
     if (imageList && imageList.length > 0) { // Verifica si la llista existeix i no està buida
+
+        // Barregem l'array imageList utilitzant l'algoritme Fisher-Yates shuffle
+        for (let i = imageList.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [imageList[i], imageList[j]] = [imageList[j], imageList[i]];
+        }
+
+
         imageList.forEach(imageFile => {
             imageUrl = imagePath + imageFile;
 	    images.push(imageUrl);
