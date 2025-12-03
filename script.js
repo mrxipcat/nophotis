@@ -92,7 +92,11 @@ const imageLists = {
 "Vika 1.jpg",
 "Vika 2.jpg",
 "Vika 3.jpg",
-"Vika 4.jpg"
+"Vika 4.jpg",
+"Carol 1.jpg",
+"Carol 2.jpg",
+"Judith 1.jpg",
+"Judith 2.jpg"
 ],
     "BlackWhite": [
 "Andrea 3.jpg",
