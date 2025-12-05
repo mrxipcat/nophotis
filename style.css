@@ -144,9 +144,15 @@ main {
 }
 
 
-#prev-image:hover,
-#next-image:hover {
-    filter: invert(1); /* Inverteix els colors de la imatge al passar el cursor 
+#prev-image img,
+#next-image img {
+    filter: invert(1) opacity(0.8);
+}
+
+
+#prev-image img:hover,
+#next-image img:hover {
+    filter: invert(0);
 }
 
 
