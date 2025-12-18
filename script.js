@@ -17,8 +17,6 @@ const imageLists = {
     ],
     "Landscapes": [
 "Asturies.jpg",
-"Aurora at Iceland.jpg",
-"Aurora at Tromso.jpg",
 "Cala Roca Grossa 1.jpg",
 "Cala Roca Grossa 2.jpg",
 "Cala Roca Grossa 3.jpg",
@@ -27,7 +25,6 @@ const imageLists = {
 "Eivissa Platja De Comte.jpg",
 "Eivissa.jpg",
 "Fecamp.jpg",
-"Holand from plane.jpg",
 "Linx a Norway.jpg",
 "Lloret.jpg",
 "Lofoten 1.jpg",
@@ -37,7 +34,6 @@ const imageLists = {
 "Lofoten 5.jpg",
 "Menorca 2.jpg",
 "Menorca.jpg",
-"Milky Way from Ulldeter.jpg",
 "Nao Victoria a Amsterdam.jpg",
 "Nao Victoria Sunset.jpg",
 "Plugia.jpg",
@@ -139,6 +135,16 @@ const imageLists = {
 "Tallin 7.jpg",
 "Tallin 8.jpg",
 "Tallin 9.jpg"
+],
+    "Sky": [
+"Aurora at Iceland.jpg",
+"Milky Way from Ulldeter.jpg",
+"Aurora at Tromso.jpg"
+],
+    "Aerial": [
+"Holand from plane.jpg"
+],
+    "Macro": [
 ]
 };
 
@@ -192,7 +198,7 @@ function loadImagesFromList(section) {
         });
     } else {
         // Si la categoria no existeix o no té imatges, mostra un missatge
-        grid.textContent = 'No hi ha imatges disponibles per a aquesta categoria.';
+        grid.textContent = '< No photos right now >';
         console.warn('Categoria no trobada o sense imatges:', category);
     }
 }
