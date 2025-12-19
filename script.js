@@ -6,7 +6,7 @@ const imageLists = {
 	"Dark.jpg",
 	"DarkBlue.jpg",
 	"Green.jpg",
-	"Maroon.jpg",
+	"BWhite.jpg",
 	"Orange.jpg",
 	"Red.jpg",
 	"Yellow.jpg"
