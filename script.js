@@ -202,9 +202,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const imageName = document.getElementById('image-name');
     const prevImageButton = document.getElementById('prev-image');
     const nextImageButton = document.getElementById('next-image');
+/*
     const aboutLink = document.getElementById('about-link');
     const aboutSection = document.getElementById('about');
     const aboutContent = document.getElementById('about-content');
+*/
     const fullImageContainer = document.getElementById('full-image-container');
 
     let currentSection = 'Colors';
@@ -328,6 +330,7 @@ function loadImagesFromList(section) {
         });
     });
 
+/*
     // Event listener per mostrar la secció "Sobre l'Autor"
     aboutLink.addEventListener('click', function (event) {
         event.preventDefault();
@@ -335,6 +338,7 @@ function loadImagesFromList(section) {
         fullImageView.style.display = 'none';
         aboutSection.style.display = 'block';
     });
+*/
 
     // Carregar la secció per defecte al carregar la pàgina
     loadImages(currentSection);
