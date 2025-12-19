@@ -300,9 +300,9 @@ function loadImagesFromList(section) {
 
     // Event listener per tancar la vista a pantalla completa al fer clic a la pantalla
     fullImageView.addEventListener('click', (event) => {
-        if (event.target === fullImageView) {
+    /*    if (event.target === fullImageView) { */
             closeFullImageView();
-        }
+    /*    } */
     });
 
     // Event listener per a la tecla ESC
@@ -345,24 +345,36 @@ function loadImagesFromList(section) {
 
     // Swipe functionality
     let touchStartX = 0;
+    let touchStartY = 0;
     let touchEndX = 0;
+    let touchEndY = 0;
 
     fullImageView.addEventListener('touchstart', (event) => {
         touchStartX = event.changedTouches[0].screenX;
+        touchStartY = event.changedTouches[0].screenY;
     }, false);
 
     fullImageView.addEventListener('touchend', (event) => {
         touchEndX = event.changedTouches[0].screenX;
+        touchEndY = event.changedTouches[0].screenY;
 
-        const swipeDistance = touchEndX - touchStartX;
+        const swipeDistanceX = touchEndX - touchStartX;
+        const swipeDistanceY = touchEndY - touchStartY;
         const swipeThreshold = 50; 
 
-        if (swipeDistance > swipeThreshold) {
+        if (swipeDistanceX > swipeThreshold) {
             showPreviousImage();
         }
 
-        if (swipeDistance < -swipeThreshold) {
+        if (swipeDistanceX < -swipeThreshold) {
             showNextImage();
+        }
+        if (swipeDistanceY > swipeThreshold) {
+            closeFullImageView();
+        }
+
+        if (swipeDistanceY < -swipeThreshold) {
+            closeFullImageView();
         }
     }, false);
 });
