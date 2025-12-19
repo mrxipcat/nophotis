@@ -51,7 +51,7 @@ nav ul li a {
 /*    border: 1px solid white;*/ /* Afegeix un marc */
     padding: 2px 25px; /* Afegeix espai al voltant del text */
     background-color: transparent; /* Fons transparent o un color sòlid */
-    border-radius: 3px; /* Opcional: per arrodonir les cantonades */
+    border-radius: 15px; /* Opcional: per arrodonir les cantonades */
     font-family: Calibri, sans-serif;
     font-size: 14px;
     line-height: 2;
