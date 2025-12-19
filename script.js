@@ -6,11 +6,9 @@ const imageLists = {
 	"Dark.jpg",
 	"DarkBlue.jpg",
 	"Green.jpg",
-	"Grey.jpg",
 	"Maroon.jpg",
 	"Orange.jpg",
 	"Red.jpg",
-	"White.jpg",
 	"Yellow.jpg"
     ],
 
@@ -142,9 +140,11 @@ const imageLists = {
 "Evgenia 5.jpg",
 "Fery 2.jpg",
 "Jelena 4.jpg",
+"Jelena 12.jpg",
 "Julia 1.jpg",
 "Julia 3.jpg",
 "Mary 6.jpg",
+"Mary 7.jpg",
 "Paula 2.jpg",
 "Sofia 2.jpg",
 "Sofia 3.jpg",
@@ -300,9 +300,9 @@ function loadImagesFromList(section) {
 
     // Event listener per tancar la vista a pantalla completa al fer clic a la pantalla
     fullImageView.addEventListener('click', (event) => {
-    /*    if (event.target === fullImageView) { */
+        if (event.target === fullImageView) { 
             closeFullImageView();
-    /*    } */
+        } 
     });
 
     // Event listener per a la tecla ESC
@@ -345,21 +345,16 @@ function loadImagesFromList(section) {
 
     // Swipe functionality
     let touchStartX = 0;
-    let touchStartY = 0;
     let touchEndX = 0;
-    let touchEndY = 0;
 
     fullImageView.addEventListener('touchstart', (event) => {
         touchStartX = event.changedTouches[0].screenX;
-        touchStartY = event.changedTouches[0].screenY;
     }, false);
 
     fullImageView.addEventListener('touchend', (event) => {
         touchEndX = event.changedTouches[0].screenX;
-        touchEndY = event.changedTouches[0].screenY;
 
         const swipeDistanceX = touchEndX - touchStartX;
-        const swipeDistanceY = touchEndY - touchStartY;
         const swipeThreshold = 50; 
 
         if (swipeDistanceX > swipeThreshold) {
@@ -368,13 +363,6 @@ function loadImagesFromList(section) {
 
         if (swipeDistanceX < -swipeThreshold) {
             showNextImage();
-        }
-        if (swipeDistanceY > swipeThreshold) {
-            closeFullImageView();
-        }
-
-        if (swipeDistanceY < -swipeThreshold) {
-            closeFullImageView();
         }
     }, false);
 });
