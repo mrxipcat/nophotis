@@ -31,15 +31,36 @@ nav ul li {
     margin: 0 10px;
 }
 
+/*
 nav ul li a {
     color: white;
     text-decoration: none;
     font-family: Calibri, sans-serif;
     font-size: 16px;
+    line-height: 2;
 }
 
 nav ul li a:hover {
     color: gray; 
+}
+*/
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+/*    border: 1px solid white;*/ /* Afegeix un marc */
+    padding: 2px 25px; /* Afegeix espai al voltant del text */
+    background-color: transparent; /* Fons transparent o un color sòlid */
+    border-radius: 3px; /* Opcional: per arrodonir les cantonades */
+    font-family: Calibri, sans-serif;
+    font-size: 14px;
+    line-height: 2;
+    background-color: black;
+}
+
+nav ul li a:hover {
+    background-color: white; /* Canvia el fons en passar el cursor */
+    color: black; /* Canvia el color del text en passar el cursor */
 }
 
 main {
