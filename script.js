@@ -1,5 +1,3 @@
-
-
 const imageLists = {
     "Colors": [
 	"Black.jpg",
@@ -15,6 +13,7 @@ const imageLists = {
 	"White.jpg",
 	"Yellow.jpg"
     ],
+
     "Landscapes": [
 "Asturies.jpg",
 "Cala Roca Grossa 1.jpg",
@@ -37,8 +36,34 @@ const imageLists = {
 "Nao Victoria a Amsterdam.jpg",
 "Nao Victoria Sunset.jpg",
 "Plugia.jpg",
+"BaixadaFalles_1.jpg",
+"BaixadaFalles_2.jpg",
+"Cadiz.jpg",
+"Cantabric.jpg",
+"CliffOfMoher.jpg",
+"EUA_Calico.jpg",
+"EUA_GoldenGate2.jpg",
+"EUA_GoldenGate3.jpg",
+"EUA_GranCanyon1.jpg",
+"EUA_GranCanyon2.jpg",
+"Lanzarote_1.jpg",
+"Lanzarote_2.jpg",
+"LofotenBlue.jpg",
+"Menorca 3.jpg",
+"Norway_1.jpg",
+"Norway_2.jpg",
+"Petra_1.jpg",
+"Petra_2.jpg",
+"Suissa_1.jpg",
+"Suissa_2.jpg",
+"Suissa_3.jpg",
+"Suissa_4.jpg",
+"Wadirum_1.jpg",
+"Wadirum_2.jpg",
+"Wadirum_3.jpg",
 "Tamariu.jpg"
     ],
+
     "Studio": [
 "Andrea 1.jpg",
 "Andrea 2.jpg",
@@ -92,8 +117,11 @@ const imageLists = {
 "Carol 1.jpg",
 "Carol 2.jpg",
 "Judith 1.jpg",
-"Judith 2.jpg"
+"Judith 2.jpg",
+"Monster.jpg",
+"Rontu.jpg"
 ],
+
     "BlackWhite": [
 "Andrea 3.jpg",
 "Andrea 4.jpg",
@@ -123,6 +151,7 @@ const imageLists = {
 "Vika 5.jpg",
 "Vika 6.jpg"
 ],
+
     "Urban": [
 "Tallin 1.jpg",
 "Tallin 10.jpg",
@@ -134,20 +163,34 @@ const imageLists = {
 "Tallin 6.jpg",
 "Tallin 7.jpg",
 "Tallin 8.jpg",
-"Tallin 9.jpg"
+"Tallin 9.jpg",
+"Belgica_1.jpg",
+"Belgium_2.jpg",
+"Belgium_3.jpg",
+"EUA_Manhatan.jpg",
+"Napols.jpg",
+"Rome.jpg",
+"EUA_GoldenGate1.jpg",
+"Autopista.jpg"
 ],
+
     "Sky": [
 "Aurora at Iceland.jpg",
 "Milky Way from Ulldeter.jpg",
-"Aurora at Tromso.jpg"
+"Aurora_3.jpg",
+"AvioLluna.jpg",
+"ErmitaSantQuircdeDurro.jpg",
+"Aurora at Tromso.jpg",
+"Palla nit.jpg"
 ],
+
     "Aerial": [
 "Holand from plane.jpg"
 ],
+
     "Macro": [
 ]
 };
-
 
 
 
