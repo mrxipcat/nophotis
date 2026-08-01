@@ -8,59 +8,66 @@ body {
 
 header {
     background-color: #222;
-    padding: 10px 0;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
    /* justify-content: space-between; */
 }
 
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: 26px;
+    row-gap: 6px;
+}
 
-nav ul {
+/* Cada grup temàtic: un títol i, a sota, la llista de seccions en horitzontal.
+   Només dues línies d'alçada perquè tot el menú s'encabeixi dins l'alçada del logo. */
+.menu-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.menu-group-title {
+    font-family: Calibri, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #999;
+    margin-bottom: 6px;
+}
+
+.menu-group-links {
     list-style: none;
     padding: 0;
     margin: 0;
-    text-align: center;
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 8px;
 }
 
-nav ul li {
-    display: inline;
-    margin: 0 10px;
+.menu-group-links li {
+    margin: 0;
 }
 
-/*
-nav ul li a {
+.menu-group-links a {
+    display: inline-block;
     color: white;
     text-decoration: none;
+    white-space: nowrap;
+    padding: 5px 18px;
+    background-color: black;
+    border-radius: 14px;
     font-family: Calibri, sans-serif;
     font-size: 16px;
-    line-height: 2;
+    line-height: 1.6;
 }
 
-nav ul li a:hover {
-    color: gray; 
-}
-*/
-
-nav ul li a {
-    color: white;
-    text-decoration: none;
-/*    border: 1px solid white;*/ /* Afegeix un marc */
-    padding: 2px 25px; /* Afegeix espai al voltant del text */
-    background-color: transparent; /* Fons transparent o un color sòlid */
-    border-radius: 15px; /* Opcional: per arrodonir les cantonades */
-    font-family: Calibri, sans-serif;
-    font-size: 14px;
-    line-height: 2;
-    background-color: black;
-}
-
-nav ul li a:hover {
-    background-color: white; /* Canvia el fons en passar el cursor */
-    color: black; /* Canvia el color del text en passar el cursor */
+.menu-group-links a:hover {
+    background-color: white;
+    color: black;
 }
 
 main {
@@ -68,24 +75,22 @@ main {
 }
 
 #gallery .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 10px;
+    columns: 280px; /* Nombre de columnes automàtic segons l'amplada disponible, com un mosaic (masonry) */
+    column-gap: 10px;
 }
 
-/* Modificacions per centrar i maximitzar les imatges */
+/* Cada imatge es mostra sencera, amb la seva proporció natural, sense retallar */
 .grid-item {
     position: relative;
-    display: flex;
-    justify-content: center; /* Centrar horizontalment */
-    align-items: center; /* Centrar verticalment */
-    overflow: hidden; /* Important per evitar que la imatge sobresurti */
+    break-inside: avoid;
+    margin-bottom: 10px;
+    overflow: hidden; /* Important per no sobresortir en l'animació de hover */
 }
 
 #gallery .grid img {
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover; /* Important per maximitzar i retallar si cal */
+    height: auto;
     cursor: pointer;
     transition: transform 0.3s ease;
 }
