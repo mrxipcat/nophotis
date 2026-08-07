@@ -39,6 +39,16 @@ nav {
     margin-bottom: 6px;
 }
 
+/* Quan el títol de grup és un enllaç cap a la subpàgina d'un altre grup temàtic */
+a.menu-group-title {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.menu-group-title:hover {
+    color: #fff;
+}
+
 .menu-group-links {
     list-style: none;
     padding: 0;

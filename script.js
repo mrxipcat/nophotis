@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
 */
     const fullImageContainer = document.getElementById('full-image-container');
 
-    let currentSection = 'Homepage';
+    let currentSection = window.DEFAULT_SECTION || 'Homepage';
     let images = [];
     let currentImageIndex = 0;
 
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function loadImagesFromList(section) {
 
-    const imagePath = `img/${section}/`;
+    const imagePath = `${window.IMG_BASE || 'img/'}${section}/`;
     const imageList = imageLists[section];
 
     if (imageList && imageList.length > 0) { // Verifica si la llista existeix i no està buida
@@ -473,11 +473,15 @@ function loadImagesFromList(section) {
     });
 
     // El logo actua com a "homepage": mostra la secció Homepage
+    // (només present a la pàgina principal; a les subpàgines de grup el logo
+    // és un enllaç normal cap a la home)
     const logoHome = document.getElementById('logo-home');
-    logoHome.addEventListener('click', function (event) {
-        event.preventDefault();
-        loadImages('Homepage');
-    });
+    if (logoHome) {
+        logoHome.addEventListener('click', function (event) {
+            event.preventDefault();
+            loadImages('Homepage');
+        });
+    }
 
     // Carregar la secció per defecte al carregar la pàgina
     loadImages(currentSection);

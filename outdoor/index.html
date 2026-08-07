@@ -3,25 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>No Photis !</title>
-    <link rel="stylesheet" href="style.css">
+    <title>No Photis ! - Outdoor</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
     <header>
-        <a href="#" id="logo-home">
-            <img src="img/NoPhotis.png" alt="No Photis"
+        <a href="../index.html">
+            <img src="../img/NoPhotis.png" alt="No Photis"
                  style="width:100px; margin-right:10px;">
         </a>
         <nav>
             <div class="menu-group">
-                <a class="menu-group-title" href="outdoor/index.html">OUTDOOR</a>
+                <div class="menu-group-title">OUTDOOR</div>
+                <ul class="menu-group-links">
+                    <li><a href="#" data-section="Landscapes">Landscapes</a></li>
+                    <li><a href="#" data-section="Urban">Urban</a></li>
+                    <li><a href="#" data-section="Travel">Travel</a></li>
+                    <li><a href="#" data-section="Lifestyle">Lifestyle</a></li>
+                    <li><a href="#" data-section="History">History</a></li>
+                </ul>
             </div>
             <div class="menu-group">
-                <a class="menu-group-title" href="beauty/index.html">BEAUTY</a>
+                <a class="menu-group-title" href="../beauty/index.html">BEAUTY</a>
             </div>
             <div class="menu-group">
-                <a class="menu-group-title" href="zoom/index.html">ZOOM</a>
+                <a class="menu-group-title" href="../zoom/index.html">ZOOM</a>
             </div>
         </nav>
     </header>
@@ -32,32 +39,26 @@
                 <!-- Les imatges es carregaran aquí mitjançant JavaScript -->
             </div>
             <div id="full-image-view">
-                <button id="prev-image" class="nav-button"><img src="img/prev.png" alt="Prev"></button>
+                <button id="prev-image" class="nav-button"><img src="../img/prev.png" alt="Prev"></button>
                 <div id="full-image-container">
                     <img id="full-image" src="" alt="">
                     <div id="image-name"></div>
                 </div>
-                <button id="next-image" class="nav-button"><img src="img/next.png" alt="Next"></button>
+                <button id="next-image" class="nav-button"><img src="../img/next.png" alt="Next"></button>
             </div>
         </section>
-
-<!--
-    <section id="about">
-      <p>Capturant instants !</p>
-        </section>
--->
     </main>
 
     <footer>
     <h2>Fotògraf - Photographer</h2>
    <div>
         <a href="https://www.instagram.com/no.photis" target="_blank">
-            <img src="img/NoPhotis.png" alt="No Photis"
+            <img src="../img/NoPhotis.png" alt="No Photis"
                  style="width:150px; float:left; margin-right:10px;">
         </a>
 
         <a href="https://www.instagram.com/no.photis.studio" target="_blank">
-            <img src="img/NoPhotisStudio.png" alt="No Photis Studio"
+            <img src="../img/NoPhotisStudio.png" alt="No Photis Studio"
                  style="width:150px; float:left; margin-right:10px;">
         </a>
                <div style="clear:both;"></div>
@@ -65,6 +66,10 @@
         <p>&copy;2026 All rights reserved. Contact via Instagram @no.photis for inquiries.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        window.DEFAULT_SECTION = 'Landscapes';
+        window.IMG_BASE = '../img/';
+    </script>
+    <script src="../script.js"></script>
 </body>
 </html>
