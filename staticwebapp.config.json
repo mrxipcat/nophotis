@@ -1,0 +1,14 @@
+{
+  "routes": [
+    {
+      "route": "/studio",
+      "redirect": "/beauty/index.html",
+      "statusCode": 301
+    },
+    {
+      "route": "/studio/*",
+      "redirect": "/beauty/index.html",
+      "statusCode": 301
+    }
+  ]
+}
