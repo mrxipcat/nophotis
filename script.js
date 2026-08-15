@@ -1,3 +1,11 @@
+// Tipus de mosaic disponibles per a la galeria. Cada pàgina tria el seu
+// assignant `window.MOSAIC_TYPE` a l'<script> inline abans de carregar
+// aquest fitxer (vegeu index.html, beauty/, outdoor/ i zoom/). Si no es
+// defineix, s'utilitza MOSAIC_DEFAULT. L'estil de cada tipus viu a
+// style.css sota `.mosaic-<tipus>`.
+const MOSAIC_TYPES = ['justified', 'columns', 'modular'];
+const MOSAIC_DEFAULT = 'justified';
+
 const imageLists = {
     "Homepage": [
 "Black.jpg",
@@ -366,6 +374,9 @@ document.addEventListener('DOMContentLoaded', function () {
 */
     const fullImageContainer = document.getElementById('full-image-container');
 
+    const mosaicType = MOSAIC_TYPES.includes(window.MOSAIC_TYPE) ? window.MOSAIC_TYPE : MOSAIC_DEFAULT;
+    document.body.classList.add(`mosaic-${mosaicType}`);
+
     let currentSection = window.DEFAULT_SECTION || 'Homepage';
     let images = [];
     let currentImageIndex = 0;
@@ -393,10 +404,10 @@ function loadImagesFromList(section) {
         }
 
 
-        imageList.forEach(imageFile => {
+        imageList.forEach((imageFile, index) => {
             imageUrl = imagePath + imageFile;
 	    images.push(imageUrl);
-            addImageToGrid(imageUrl);
+            addImageToGrid(imageUrl, index);
         });
     } else {
         // Si la categoria no existeix o no té imatges, mostra un missatge
@@ -408,7 +419,7 @@ function loadImagesFromList(section) {
 
 
     // Funció per afegir una imatge al grid
-    function addImageToGrid(imageUrl) {
+    function addImageToGrid(imageUrl, index) {
         const gridItem = document.createElement('div');
         gridItem.classList.add('grid-item');
 
@@ -416,6 +427,7 @@ function loadImagesFromList(section) {
         img.src = imageUrl;
         img.alt = imageUrl.split('/').pop().split('.')[0];
         img.addEventListener('click', () => showFullImage(images.indexOf(imageUrl)));
+        img.addEventListener('load', () => applyMasonryLayout(gridItem, img, index));
 
         const imageNameGrid = document.createElement('div');
         imageNameGrid.classList.add('image-name-grid');
@@ -425,6 +437,70 @@ function loadImagesFromList(section) {
         gridItem.appendChild(imageNameGrid);
         grid.appendChild(gridItem);
     }
+
+    // Mosaic 'modular' (vegeu MOSAIC_TYPES): l'amplada de cada cel·la (grid-column)
+    // es tria segons l'orientació real de la foto -perquè les panoràmiques
+    // guanyin columnes i les verticals no s'estirin en excés- i l'alçada
+    // (grid-row-end) es calcula a partir de l'alçada renderitzada resultant,
+    // per no retallar ni deixar marge. Cada 8 posicions, dues fotos reben
+    // una columna extra com a punt focal.
+    const MASONRY_ROW_HEIGHT = 10;
+    const MASONRY_ROW_GAP = 10;
+    const MASONRY_FOCAL_STRIDE = 8;
+    const MASONRY_FOCAL_OFFSETS = [0, 4];
+    const MASONRY_WIDE_RATIO = 1.15;
+
+    function getMasonryColumnCount() {
+        const columnCount = window.getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
+        return columnCount || 1;
+    }
+
+    function computeMasonryColumnSpan(ratio, isFocal) {
+        let span = ratio > MASONRY_WIDE_RATIO ? 2 : 1;
+        if (isFocal) span += 1;
+        return Math.min(span, getMasonryColumnCount());
+    }
+
+    function applyMasonryRowSpan(item, img) {
+        requestAnimationFrame(() => {
+            const rowSpan = Math.ceil(
+                (img.getBoundingClientRect().height + MASONRY_ROW_GAP) /
+                (MASONRY_ROW_HEIGHT + MASONRY_ROW_GAP)
+            );
+            item.style.gridRowEnd = `span ${rowSpan}`;
+        });
+    }
+
+    function applyMasonryLayout(item, img, index) {
+        if (mosaicType !== 'modular') return;
+
+        const ratio = img.naturalWidth / img.naturalHeight;
+        const isFocal = MASONRY_FOCAL_OFFSETS.includes(index % MASONRY_FOCAL_STRIDE);
+        item.dataset.ratio = ratio;
+        item.dataset.focal = isFocal ? '1' : '0';
+
+        item.style.gridColumn = `span ${computeMasonryColumnSpan(ratio, isFocal)}`;
+        applyMasonryRowSpan(item, img);
+    }
+
+    function resizeAllMasonryItems() {
+        if (mosaicType !== 'modular') return;
+        document.querySelectorAll('.grid-item').forEach(item => {
+            const img = item.querySelector('img');
+            if (!img || !img.complete || !img.naturalWidth) return;
+
+            const ratio = parseFloat(item.dataset.ratio);
+            const isFocal = item.dataset.focal === '1';
+            item.style.gridColumn = `span ${computeMasonryColumnSpan(ratio, isFocal)}`;
+            applyMasonryRowSpan(item, img);
+        });
+    }
+
+    let masonryResizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(masonryResizeTimeout);
+        masonryResizeTimeout = setTimeout(resizeAllMasonryItems, 150);
+    });
 
     // Funció per mostrar la imatge a pantalla completa
     function showFullImage(index) {

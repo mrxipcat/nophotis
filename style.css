@@ -84,9 +84,19 @@ main {
     padding: 20px;
 }
 
-/* Galeria "justificada": alçada de fila fixa i amplada lliure segons la proporció
-   de cada imatge, perquè una foto horitzontal i una vertical es vegin amb una
-   mida semblant (per alçada) en lloc que l'horitzontal surti molt més petita. */
+/* ============================================================
+   MOSAIC DE LA GALERIA
+   Cada secció (homepage, outdoor, beauty, zoom) declara el seu tipus de
+   mosaic assignant `window.MOSAIC_TYPE` a l'<script> inline de la pàgina,
+   abans de carregar script.js. Tipus disponibles:
+     'justified' -> files d'alçada fixa, amplada segons proporció (per defecte)
+     'columns'   -> mosaic clàssic per columnes (a l'estil Pinterest)
+     'modular'   -> grid asimètric amb punts focals (lògica a script.js)
+   script.js afegeix la classe `mosaic-<tipus>` al <body>; els blocs de sota
+   defineixen l'estil de cada tipus. Per afegir-ne un de nou, crea un bloc
+   `.mosaic-<nom> #gallery .grid { ... }` seguint el mateix patró.
+   ============================================================ */
+
 #gallery .grid {
     display: flex;
     flex-wrap: wrap;
@@ -96,45 +106,92 @@ main {
 /* Cada imatge es mostra sencera, amb la seva proporció natural, sense retallar */
 .grid-item {
     position: relative;
-    height: 260px;
     overflow: hidden; /* Important per no sobresortir en l'animació de hover */
 }
 
 #gallery .grid img {
     display: block;
-    height: 100%;
-    width: auto;
-    max-width: 100%;
     cursor: pointer;
     transition: transform 0.3s ease;
-}
-
-@media (max-width: 700px) {
-    .grid-item {
-        height: 170px;
-    }
 }
 
 #gallery .grid img:hover {
     transform: scale(1.05);
 }
 
-/* BEAUTY: reverteix al mosaic antic per columnes (en lloc de files justificades) */
-.page-beauty #gallery .grid {
+/* ---- justified: files d'alçada fixa, amplada lliure segons la proporció
+   de cada imatge, perquè una foto horitzontal i una vertical es vegin amb
+   una mida semblant (per alçada) en lloc que l'horitzontal surti molt més
+   petita. Centrada perquè la darrera fila (incompleta) no quedi despenjada
+   a l'esquerra. ---- */
+.mosaic-justified #gallery .grid {
+    justify-content: center;
+}
+
+.mosaic-justified .grid-item {
+    height: 260px;
+}
+
+.mosaic-justified #gallery .grid img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+}
+
+@media (max-width: 700px) {
+    .mosaic-justified .grid-item {
+        height: 170px;
+    }
+}
+
+/* ---- columns: mosaic clàssic per columnes ---- */
+.mosaic-columns #gallery .grid {
     display: block;
     columns: 280px;
     column-gap: 10px;
 }
 
-.page-beauty .grid-item {
+.mosaic-columns .grid-item {
     height: auto;
     break-inside: avoid;
     margin-bottom: 10px;
 }
 
-.page-beauty #gallery .grid img {
+.mosaic-columns #gallery .grid img {
     width: 100%;
     height: auto;
+}
+
+/* ---- modular: grid asimètric amb punts focals. El JS decideix per cada
+   foto quantes columnes (grid-column) i files (grid-row-end) ocupa la
+   cel·la: l'amplada surt de l'orientació real de la imatge (les panoràmiques
+   guanyen columnes, les verticals no s'estiren) i cada 8 posicions dues
+   fotos reben una columna extra com a punt focal. L'alçada resultant es
+   calcula a partir de l'alçada renderitzada, perquè la imatge s'hi ajusti
+   exactament sense retallar-se ni deixar marge negre. ---- */
+.mosaic-modular #gallery .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-auto-rows: 10px;
+    grid-auto-flow: dense;
+    gap: 10px;
+}
+
+.mosaic-modular .grid-item {
+    height: auto;
+}
+
+.mosaic-modular #gallery .grid img {
+    width: 100%;
+    height: auto;
+}
+
+/* En pantalles molt amples, limita l'amplada total perquè el nombre de
+   columnes segueixi creixent (auto-fill) en lloc de deixar que unes poques
+   columnes s'eixamplin fins a fer les fotos exagerades. */
+.mosaic-modular main {
+    max-width: 2000px;
+    margin: 0 auto;
 }
 
 /* Estils per al nom del fitxer sota cada imatge del grid */
