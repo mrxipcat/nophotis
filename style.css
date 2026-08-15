@@ -84,29 +84,57 @@ main {
     padding: 20px;
 }
 
+/* Galeria "justificada": alçada de fila fixa i amplada lliure segons la proporció
+   de cada imatge, perquè una foto horitzontal i una vertical es vegin amb una
+   mida semblant (per alçada) en lloc que l'horitzontal surti molt més petita. */
 #gallery .grid {
-    columns: 280px; /* Nombre de columnes automàtic segons l'amplada disponible, com un mosaic (masonry) */
-    column-gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 /* Cada imatge es mostra sencera, amb la seva proporció natural, sense retallar */
 .grid-item {
     position: relative;
-    break-inside: avoid;
-    margin-bottom: 10px;
+    height: 260px;
     overflow: hidden; /* Important per no sobresortir en l'animació de hover */
 }
 
 #gallery .grid img {
     display: block;
-    width: 100%;
-    height: auto;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
     cursor: pointer;
     transition: transform 0.3s ease;
 }
 
+@media (max-width: 700px) {
+    .grid-item {
+        height: 170px;
+    }
+}
+
 #gallery .grid img:hover {
     transform: scale(1.05);
+}
+
+/* BEAUTY: reverteix al mosaic antic per columnes (en lloc de files justificades) */
+.page-beauty #gallery .grid {
+    display: block;
+    columns: 280px;
+    column-gap: 10px;
+}
+
+.page-beauty .grid-item {
+    height: auto;
+    break-inside: avoid;
+    margin-bottom: 10px;
+}
+
+.page-beauty #gallery .grid img {
+    width: 100%;
+    height: auto;
 }
 
 /* Estils per al nom del fitxer sota cada imatge del grid */
