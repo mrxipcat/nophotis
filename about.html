@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No Photis ! - Sobre l'autor</title>
+    <link rel="icon" href="img/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="img/favicon-16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <link rel="stylesheet" href="style.css">
     <style>
         body {
@@ -22,24 +25,50 @@
         .about-content h1 {
             font-size: 22px;
             margin-bottom: 4px;
+            color: #fff;
+            background-color: #444;
+            padding: 10px 14px;
+            border-radius: 4px;
         }
         .about-content h2 {
             font-size: 15px;
             letter-spacing: 1px;
             text-transform: uppercase;
-            color: #999;
+            color: #fff;
+            background-color: #444;
             margin-top: 34px;
+            padding: 10px 14px;
+            border-radius: 4px;
         }
         .about-content p.lang-en {
             color: #aaa;
+            font-style: italic;
         }
         .about-content a {
             color: #fff;
+        }
+        .about-back {
+            display: inline-block;
+            margin-bottom: 24px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #999;
+            text-decoration: none;
+            border: 1px solid #444;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .about-back:hover {
+            color: #fff;
+            border-color: #fff;
         }
     </style>
 </head>
 <body>
     <div class="about-content">
+        <a href="index.html" class="about-back" id="backLink">&larr; Tornar / Back</a>
         <img src="img/NoPhotis.png" alt="No Photis" class="logo">
 
         <h1>Sobre l'autor / About the author</h1>
@@ -66,5 +95,23 @@
         </p>
         <p>&copy;2026 No Photis. All rights reserved.</p>
     </div>
+
+    <script>
+        (function () {
+            var backLink = document.getElementById('backLink');
+            var openedInNewTab = !!window.opener || (history.length <= 1);
+            if (openedInNewTab) {
+                backLink.textContent = 'Tancar / Close';
+                backLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.close();
+                    // Fallback if the tab can't be closed (e.g. not opened by script)
+                    setTimeout(function () {
+                        window.location.href = 'index.html';
+                    }, 300);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
