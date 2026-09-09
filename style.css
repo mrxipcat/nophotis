@@ -80,6 +80,12 @@ a.menu-group-title:hover {
     color: black;
 }
 
+.menu-group-links a.active {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
 main {
     padding: 20px;
 }

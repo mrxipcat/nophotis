@@ -260,7 +260,8 @@ const imageLists = {
 "R-DSC08223S.jpg",
 "R-DSC08840ES.jpg",
 "R-VAurora08-0367S.jpg",
-"R-VAurora09-0456S.jpg"
+"R-VAurora09-0456S.jpg",
+"R-IMG_1336S.jpg"
 ],
 
     "Aerial": [
@@ -313,6 +314,7 @@ const imageLists = {
 "R-DSC03973S.jpg",
 "R-DSC04045S.jpg",
 "R-DSC04070S.jpg",
+"R-DSC05764S.jpg",
 "R-DSC05905S.jpg",
 "R-DSC06245S.jpg",
 "R-DSC06307S.jpg",
@@ -330,13 +332,23 @@ const imageLists = {
 "Jelena 11.jpg",
 "Jelena 13.jpg",
 "Monster.jpg",
+"R-DSC00541IES.jpg",
+"R-DSC00774IES.jpg",
+"R-DSC01031IES.jpg",
 "R-DSC04434ES.jpg",
 "R-DSC04517ES.jpg",
+"R-DSC04533IES.jpg",
+"R-DSC04609IES.jpg",
+"R-DSC04672IES.jpg",
 "R-DSC04828IES.jpg",
 "R-DSC04897ES.jpg",
 "R-DSC04924ES.jpg",
 "R-DSC04935ES.jpg",
+"R-DSC04984IES.jpg",
+"R-DSC05099IES.jpg",
 "R-DSC05107ES.jpg",
+"R-DSC05258IES.jpg",
+"R-DSC05458IES.jpg",
 "R-DSC09392ES.jpg",
 "R-DSC09439ES.jpg",
 "R-DSC09489ES.jpg"
@@ -387,6 +399,14 @@ document.addEventListener('DOMContentLoaded', function () {
         images = [];
         fullImageView.style.display = 'none';
         loadImagesFromList(section);
+        updateActiveMenuLink(section);
+    }
+
+    // Remarca al menú l'enllaç de la secció que s'està mostrant
+    function updateActiveMenuLink(section) {
+        document.querySelectorAll('nav a[data-section]').forEach(link => {
+            link.classList.toggle('active', link.dataset.section === section);
+        });
     }
 
 
