@@ -272,7 +272,9 @@ const imageLists = {
 "R-DSC05976S.jpg",
 "R-DSC05991ES.jpg",
 "R-Maduixa.JPG",
-"R-Maduixa_visitant.JPG"
+"R-Maduixa_visitant.JPG",
+"R-IMG_1630S.jpg",
+"R-IMG_1631S.jpg"
 ],
 
     "Travel": [
