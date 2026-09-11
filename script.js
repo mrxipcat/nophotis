@@ -250,7 +250,6 @@ const imageLists = {
     "Anonymous": [
 "202507_Dark.jpg",
 "202507_DSC07618IES.jpg",
-"202507_DSC08647IES.jpg",
 "202605_R-DSC01897ES.jpg"
 ],
 
