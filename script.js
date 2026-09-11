@@ -97,6 +97,8 @@ const imageLists = {
 "202507_Carol 2.jpg",
 "202507_R-DSC08052ES.jpg",
 "202507_Sofia 1.jpg",
+"202508_DSC09506BIES.jpg",
+"202508_DSC09697IES.jpg",
 "202508_Enya 2.jpg",
 "202508_Eva 3.jpg",
 "202508_Eva 7.jpg",
@@ -171,6 +173,7 @@ const imageLists = {
 "202507_R-guillemES.jpg",
 "202507_Sofia 2.jpg",
 "202507_Sofia 3.jpg",
+"202508_DSC09811IES.jpg",
 "202508_Enya 1.jpg",
 "202508_Enya 3.jpg",
 "202508_Enya 4.jpg",
@@ -246,6 +249,8 @@ const imageLists = {
 
     "Anonymous": [
 "202507_Dark.jpg",
+"202507_DSC07618IES.jpg",
+"202507_DSC08647IES.jpg",
 "202605_R-DSC01897ES.jpg"
 ],
 
