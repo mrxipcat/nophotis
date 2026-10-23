@@ -41,6 +41,7 @@ const imageLists = {
 "202006_Menorca.jpg",
 "202008_Asturies.jpg",
 "202108_Cadiz.jpg",
+"202302_DSC_0157S.jpg",
 "202302_R-DSC_7828S.jpg",
 "202302_R-DSC10910S.jpg",
 "202308_Fecamp.jpg",
@@ -155,7 +156,10 @@ const imageLists = {
 "202607_R-DSC06836IES.jpg",
 "202607_R-DSC07529ES.jpg",
 "202607_R-DSC07792ES.jpg",
-"202607_R-DSC09066ES.jpg"
+"202607_R-DSC09066ES.jpg",
+"202609_DSC06088IES.jpg",
+"202609_DSC08076BES.jpg",
+"202609_DSC08233IES.jpg"
 ],
 
     "BlackWhite": [
@@ -216,7 +220,11 @@ const imageLists = {
 "202607_R-DSC07979ES.jpg",
 "202607_R-DSC08698BES.jpg",
 "202607_R-DSC08851ES26.jpg",
-"202607_R-DSC09084ES.jpg"
+"202607_R-DSC09084ES.jpg",
+"202609_DSC06003IES.jpg",
+"202609_DSC07566IES.jpg",
+"202609_DSC07647IES.jpg",
+"202609_DSC08587IES.jpg"
 ],
 
     "StudioOutdoor": [
@@ -250,7 +258,9 @@ const imageLists = {
     "Anonymous": [
 "202507_Dark.jpg",
 "202507_DSC07618IES.jpg",
-"202605_R-DSC01897ES.jpg"
+"202605_DSC02155AS.jpg",
+"202605_R-DSC01897ES.jpg",
+"202608_DSC05118BES.jpg"
 ],
 
     "Urban": [
@@ -340,7 +350,8 @@ const imageLists = {
 "202503_Lofoten 1.jpg",
 "202503_Lofoten 2.jpg",
 "202503_Lofoten 3.jpg",
-"202503_Lofoten 4.jpg"
+"202503_Lofoten 4.jpg",
+"202610_Islandia34S.jpg"
 ],
 
     "Lifestyle": [
