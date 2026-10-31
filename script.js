@@ -13,15 +13,15 @@ const imageLists = {
 "202304_Blue.jpg",
 "202312_Orange.jpg",
 "202407_Red.jpg",
-"202504_Maroon.jpg",
-"202505_Black.jpg",
-"202506_Blond.jpg",
+"202505_Jelena 6.jpg",
 "202506_DarkBlue.jpg",
-"202507_Dark.jpg",
+"202507_Carol 1.jpg",
 "202509_BWhite.jpg",
 "202603_R-DSC08696ES.jpg",
 "202605_R-DSC03046CES.jpg",
-"202607_R-DSC06705IES.jpg"
+"202607_R-DSC06705IES.jpg",
+"202608_R-DSC05099IES.jpg",
+"202609_DSC08076BES.jpg"
 ],
 
     "Landscapes": [
@@ -111,12 +111,9 @@ const imageLists = {
 "202509_Paula 1.jpg",
 "202509_Paula 3.jpg",
 "202509_Paula 4.jpg",
-"202510_Elena 2.jpg",
 "202510_R-DSC02623ES.jpg",
 "202511_Judith 1.jpg",
 "202511_Judith 2.jpg",
-"202511_R-DSC04376ES.jpg",
-"202511_R-DSC04419CES.jpg",
 "202602_R-DSC05004ES.jpg",
 "202602_R-DSC05455ES.jpg",
 "202602_R-DSC05460ES.jpg",

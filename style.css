@@ -369,3 +369,336 @@ footer a:hover {
     color: #000 !important;
     border-color: #fff;
 }
+
+/* ============================================================
+   SESSIONS I TARIFES / SESSIONS BECADES
+   Bàner de convocatòria (portada, BEAUTY i /sessions) i pàgines
+   /sessions i /sessions-becades. Tots els textos i preus són a l'HTML.
+   ============================================================ */
+
+/* Zona dreta de la capçalera: bàner de convocatòria (si es mostra) i botó
+   "Sessions i tarifes", a la mateixa alçada que el menú */
+.header-dreta {
+    margin-left: auto;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px 14px;
+    padding-left: 20px;
+}
+
+.menu-sessions {
+    white-space: nowrap;
+    font-family: Calibri, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #fff;
+    text-decoration: none;
+    background-color: #1f51ff;
+    border: 1px solid #1f51ff;
+    border-radius: 10px;
+    padding: 6px 12px;
+    box-shadow: 0 0 10px rgba(31, 81, 255, 0.6);
+}
+
+.menu-sessions:hover,
+.menu-sessions:focus-visible {
+    background-color: #4d74ff;
+    border-color: #fff;
+    box-shadow: 0 0 14px rgba(77, 116, 255, 0.85);
+}
+
+.menu-sessions[aria-current="page"] {
+    border-color: #fff;
+}
+
+/* Bàner: un sol element, en majúscules */
+.convocatoria-banner {
+    white-space: nowrap;
+    font-family: Calibri, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #fff;
+    border-radius: 14px;
+    padding: 6px 16px;
+}
+
+.convocatoria-banner:hover,
+.convocatoria-banner:focus-visible {
+    background-color: #fff;
+    color: #000;
+}
+
+.convocatoria-banner[hidden] {
+    display: none;
+}
+
+/* En pantalles estretes, el menú es queda al costat del logo com sempre i la
+   zona dreta passa a una línia pròpia, alineada a la dreta */
+@media (max-width: 700px) {
+    header {
+        flex-wrap: wrap;
+        row-gap: 12px;
+    }
+    header nav {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+    .header-dreta {
+        flex-basis: 100%;
+        padding-left: 0;
+    }
+    .convocatoria-banner {
+        white-space: normal;
+        text-align: right;
+    }
+}
+
+.pagina-sessions a:focus-visible,
+nav a:focus-visible,
+.header-dreta a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.sessions-main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    line-height: 1.6;
+}
+
+.sessions-main a {
+    color: #fff;
+}
+
+.sessions-main h1 {
+    font-size: 26px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    margin: 0 0 12px;
+}
+
+.sessions-main h2 {
+    font-family: Calibri, sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ccc;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+    margin: 40px 0 16px;
+}
+
+.sessions-main h3 {
+    font-size: 16px;
+    margin: 24px 0 8px;
+}
+
+.sessions-intro p {
+    color: #ccc;
+    max-width: 640px;
+}
+
+.sessions-intro .sessions-subtitol {
+    margin: -6px 0 14px;
+    font-family: Calibri, sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #999;
+}
+
+.sessions-llista {
+    padding-left: 20px;
+}
+
+.sessions-llista li {
+    margin-bottom: 6px;
+}
+
+.sessions-boto {
+    display: inline-block;
+    font-family: Calibri, sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #000 !important;
+    background-color: #fff;
+    border: 1px solid #fff;
+    border-radius: 20px;
+    padding: 8px 22px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.sessions-boto:hover {
+    background-color: #ccc;
+    border-color: #ccc;
+}
+
+/* Targetes de serveis: una columna al mòbil, 2–3 a escriptori */
+.serveis-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+@media (min-width: 640px) {
+    .serveis-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 960px) {
+    .serveis-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.servei-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 18px 20px;
+}
+
+.servei-card h3 {
+    margin: 0 0 2px;
+    font-size: 17px;
+}
+
+.servei-durada {
+    margin: 0 0 10px;
+    color: #999;
+    font-size: 14px;
+}
+
+.servei-card ul {
+    margin: 0 0 14px;
+    padding-left: 18px;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.servei-preu {
+    margin: auto 0 0;
+    font-size: 22px;
+}
+
+.servei-preu small {
+    font-size: 12px;
+    color: #999;
+}
+
+.servei-nota {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: #aaa;
+}
+
+.servei-becable {
+    border-color: #777;
+}
+
+/* Bloc de becades: diferenciat però sobri */
+.becades-bloc {
+    background-color: #151515;
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 4px 20px 20px;
+    margin-top: 40px;
+    scroll-margin-top: 16px;
+}
+
+.becades-bloc h2 {
+    margin-top: 20px;
+}
+
+.becades-dades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    margin: 16px 0;
+}
+
+.becades-dades dt {
+    font-family: Calibri, sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #999;
+}
+
+.becades-dades dd {
+    margin: 0;
+}
+
+.becades-dades [hidden] {
+    display: none;
+}
+
+.becades-recordatori {
+    color: #ccc;
+}
+
+.moodboard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 20px 0;
+}
+
+@media (min-width: 640px) {
+    .moodboard {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.moodboard img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    display: block;
+}
+
+.becades-nota {
+    font-size: 13px;
+    color: #aaa;
+}
+
+/* Selector d'idioma (CAT · ES · EN) de /sessions i /sessions-becades */
+.selector-idioma {
+    display: flex;
+    align-items: center;
+    font-family: Calibri, sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.selector-idioma a {
+    color: #999;
+    text-decoration: none;
+    padding: 4px 6px;
+}
+
+.selector-idioma a + a {
+    border-left: 1px solid #555;
+}
+
+.selector-idioma a:hover {
+    color: #fff;
+}
+
+.selector-idioma a[aria-current="page"] {
+    color: #fff;
+    font-weight: bold;
+}
