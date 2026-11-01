@@ -429,12 +429,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-function loadImagesFromList(section) {
+    // Càrrega de la galeria sense "salts": primer es demanen totes les fotos
+    // i s'espera només a conèixer-ne les dimensions (el navegador les sap
+    // quan rep la capçalera del fitxer, molt abans de tenir la foto sencera).
+    // Llavors es col·loquen totes de cop al mosaic amb l'espai ja reservat, i
+    // cada foto apareix amb un fos quan acaba de descarregar-se. Així cap foto
+    // nova desplaça les que ja es veuen. Si alguna foto triga massa a donar
+    // les dimensions (xarxa lenta), es col·loquen les que ja estan a punt i
+    // les endarrerides s'afegeixen al final quan arriben.
+    const DIMENSIONS_TIMEOUT_MS = 1500;
+    const DIMENSIONS_POLL_MS = 40;
+    let loadToken = 0;
 
-    const imagePath = `${window.IMG_BASE || 'img/'}${section}/`;
-    const imageList = imageLists[section];
+    function loadImagesFromList(section) {
+        const token = ++loadToken;
+        const imagePath = `${window.IMG_BASE || 'img/'}${section}/`;
+        const imageList = imageLists[section];
 
-    if (imageList && imageList.length > 0) { // Verifica si la llista existeix i no està buida
+        if (!imageList || imageList.length === 0) {
+            // Si la categoria no existeix o no té imatges, mostra un missatge
+            grid.textContent = '< No photos right now >';
+            console.warn('Categoria no trobada o sense imatges:', section);
+            return;
+        }
 
         // Barregem l'array imageList utilitzant l'algoritme Fisher-Yates shuffle
         for (let i = imageList.length - 1; i > 0; i--) {
@@ -442,31 +459,70 @@ function loadImagesFromList(section) {
             [imageList[i], imageList[j]] = [imageList[j], imageList[i]];
         }
 
-
-        imageList.forEach((imageFile, index) => {
-            imageUrl = imagePath + imageFile;
-	    images.push(imageUrl);
-            addImageToGrid(imageUrl, index);
+        // Comença totes les descàrregues alhora
+        const entries = imageList.map(imageFile => {
+            const img = document.createElement('img');
+            const entry = { url: imagePath + imageFile, img, state: 'pending' };
+            img.addEventListener('load', () => img.classList.add('loaded'));
+            img.addEventListener('error', () => { entry.state = 'error'; });
+            img.src = entry.url;
+            return entry;
         });
-    } else {
-        // Si la categoria no existeix o no té imatges, mostra un missatge
-        grid.textContent = '< No photos right now >';
-        console.warn('Categoria no trobada o sense imatges:', section);
+
+        let placedInitialBatch = false;
+        let placedCount = 0;
+        const startedAt = performance.now();
+
+        function place(entry) {
+            entry.state = 'placed';
+            images.push(entry.url);
+            addImageToGrid(entry, placedCount++);
+        }
+
+        function tick() {
+            if (token !== loadToken) return; // L'usuari ha canviat de secció
+
+            entries.forEach(entry => {
+                if (entry.state === 'pending' && entry.img.naturalWidth > 0) {
+                    entry.state = 'ready';
+                }
+            });
+
+            const stillPending = entries.some(e => e.state === 'pending');
+
+            if (!placedInitialBatch) {
+                const timedOut = performance.now() - startedAt > DIMENSIONS_TIMEOUT_MS;
+                if (stillPending && !timedOut) {
+                    setTimeout(tick, DIMENSIONS_POLL_MS);
+                    return;
+                }
+                placedInitialBatch = true;
+            }
+
+            // Col·loca (en l'ordre barrejat) totes les que ja tenen dimensions
+            entries.forEach(entry => {
+                if (entry.state === 'ready') place(entry);
+            });
+
+            if (stillPending) setTimeout(tick, DIMENSIONS_POLL_MS * 4);
+        }
+
+        tick();
     }
-}
 
-
-
-    // Funció per afegir una imatge al grid
-    function addImageToGrid(imageUrl, index) {
+    // Funció per afegir una imatge al grid. Les dimensions ja són conegudes:
+    // es posen com a atributs width/height perquè el navegador reservi l'espai
+    // exacte (aspect-ratio) abans que la foto acabi de descarregar-se.
+    function addImageToGrid(entry, index) {
+        const { url: imageUrl, img } = entry;
         const gridItem = document.createElement('div');
         gridItem.classList.add('grid-item');
 
-        const img = document.createElement('img');
-        img.src = imageUrl;
+        img.width = img.naturalWidth;
+        img.height = img.naturalHeight;
         img.alt = imageUrl.split('/').pop().split('.')[0];
         img.addEventListener('click', () => showFullImage(images.indexOf(imageUrl)));
-        img.addEventListener('load', () => applyMasonryLayout(gridItem, img, index));
+        if (img.complete) img.classList.add('loaded');
 
         const imageNameGrid = document.createElement('div');
         imageNameGrid.classList.add('image-name-grid');
@@ -475,6 +531,8 @@ function loadImagesFromList(section) {
         gridItem.appendChild(img);
         gridItem.appendChild(imageNameGrid);
         grid.appendChild(gridItem);
+
+        applyMasonryLayout(gridItem, img, index);
     }
 
     // Mosaic 'modular' (vegeu MOSAIC_TYPES): l'amplada de cada cel·la (grid-column)
@@ -526,7 +584,7 @@ function loadImagesFromList(section) {
         if (mosaicType !== 'modular') return;
         document.querySelectorAll('.grid-item').forEach(item => {
             const img = item.querySelector('img');
-            if (!img || !img.complete || !img.naturalWidth) return;
+            if (!img || !img.naturalWidth) return;
 
             const ratio = parseFloat(item.dataset.ratio);
             const isFocal = item.dataset.focal === '1';

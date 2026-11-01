@@ -11,55 +11,75 @@ header {
     padding: 10px 20px;
     display: flex;
     align-items: center;
-   /* justify-content: space-between; */
+    /* Si la zona dreta (convocatòria + sessions) no hi cap al costat del
+       menú, baixa a una línia pròpia, alineada a la dreta */
+    flex-wrap: wrap;
+    row-gap: 12px;
 }
 
 nav {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
-    column-gap: 26px;
-    row-gap: 6px;
+    min-width: 0;
+    /* Mai més ample que l'espai al costat del logo (100px + 28px de marge),
+       perquè el menú no baixi a sota del logo en pantalles mitjanes */
+    max-width: calc(100% - 128px);
+    align-items: center;
+    gap: 10px 24px;
 }
 
-/* Cada grup temàtic: un títol i, a sota, la llista de seccions en horitzontal.
-   Només dues línies d'alçada perquè tot el menú s'encabeixi dins l'alçada del logo. */
+/* Cada grup temàtic és una caixa amb el títol (PHOTO, BEAUTY, ZOOM). Totes
+   tenen la mateixa alçada i una amplada mínima, a totes les pàgines.
+   El grup actiu (la subpàgina que s'està veient) creix cap a la dreta i
+   mostra les seves seccions en línia dins la mateixa caixa, separades del
+   títol per una línia vertical. */
 .menu-group {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    min-width: 150px;
+    min-height: 44px;
+    box-sizing: border-box;
     border: 1px solid #333;
     border-radius: 10px;
-    padding: 6px 8px;
-    margin: -6px -8px;
 }
 
 .menu-group-title {
+    flex: 1 0 auto;
+    box-sizing: border-box;
+    padding: 12px 18px;
+    text-align: center;
     font-family: Calibri, sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     color: #999;
-    margin-bottom: 6px;
 }
 
-/* Quan el títol de grup és un enllaç cap a la subpàgina d'un altre grup temàtic */
+/* Quan el títol de grup és un enllaç cap a la subpàgina d'un altre grup
+   temàtic, l'enllaç omple tota la caixa: tota la superfície és clicable */
 a.menu-group-title {
     text-decoration: none;
     cursor: pointer;
 }
 
-a.menu-group-title:hover {
+.menu-group:has(> a.menu-group-title):hover {
+    border-color: #888;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.menu-group:has(> a.menu-group-title):hover .menu-group-title {
     color: #fff;
 }
 
 .menu-group-links {
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0 7px 0 12px;
+    border-left: 1px solid #555;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    gap: 6px;
 }
 
 .menu-group-links li {
@@ -68,20 +88,20 @@ a.menu-group-title:hover {
 
 .menu-group-links a {
     display: inline-block;
-    color: white;
+    color: #ddd;
     text-decoration: none;
     white-space: nowrap;
-    padding: 5px 18px;
-    background-color: black;
+    padding: 4px 16px;
     border-radius: 14px;
     font-family: Calibri, sans-serif;
     font-size: 14px;
     line-height: 1.6;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .menu-group-links a:hover {
-    background-color: white;
-    color: black;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
 }
 
 .menu-group-links a.active {
@@ -90,15 +110,50 @@ a.menu-group-title:hover {
     font-weight: bold;
 }
 
-/* El grup temàtic actiu (la pàgina que s'està visualitzant) es distingeix
-   dels altres amb un marc més marcat i un fons lleugerament més clar. */
+/* El grup temàtic actiu es distingeix dels altres amb un marc més marcat
+   i un fons lleugerament més clar */
 .menu-group.active-group {
     border-color: #888;
     background-color: rgba(255, 255, 255, 0.08);
 }
 
 .menu-group.active-group .menu-group-title {
+    flex: 0 0 auto;
+    padding-right: 14px;
     color: #fff;
+}
+
+@media (max-width: 700px) {
+    nav {
+        gap: 8px 12px;
+    }
+    .menu-group {
+        min-width: 0;
+        min-height: 38px;
+    }
+    .menu-group-title {
+        padding: 10px 12px;
+        font-size: 13px;
+        letter-spacing: 2px;
+    }
+    /* Al mòbil el grup actiu ocupa tota la línia: títol a dalt i les
+       seccions a sota, perquè hi càpiguen sense estrènyer-se */
+    .menu-group.active-group {
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        order: 1;
+    }
+    .menu-group.active-group .menu-group-title {
+        flex-basis: 100%;
+        text-align: left;
+        padding-bottom: 4px;
+    }
+    .menu-group-links {
+        border-left: none;
+        padding: 0 6px 8px;}
+    .menu-group-links a {
+        padding: 4px 12px;
+    }
 }
 
 main {
@@ -128,12 +183,21 @@ main {
 .grid-item {
     position: relative;
     overflow: hidden; /* Important per no sobresortir en l'animació de hover */
+    background-color: #111; /* Espai reservat mentre la foto es descarrega */
 }
 
+/* Les fotos s'afegeixen al mosaic amb la seva mida ja reservada (script.js
+   en coneix la proporció abans de col·locar-les) i apareixen amb un fos,
+   de manera que cap foto desplaça les que ja s'estan mostrant. */
 #gallery .grid img {
     display: block;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.5s ease;
+}
+
+#gallery .grid img.loaded {
+    opacity: 1;
 }
 
 #gallery .grid img:hover {
@@ -151,12 +215,17 @@ main {
 
 .mosaic-justified .grid-item {
     height: 260px;
+    max-width: 100%;
 }
 
+/* L'amplada surt dels atributs width/height que posa script.js (proporció
+   coneguda abans de la descàrrega). Si una panoràmica no hi cap, es retalla
+   lleugerament en lloc de deformar-se. */
 .mosaic-justified #gallery .grid img {
     height: 100%;
     width: auto;
     max-width: 100%;
+    object-fit: cover;
 }
 
 @media (max-width: 700px) {
@@ -376,17 +445,16 @@ footer a:hover {
    /sessions i /sessions-becades. Tots els textos i preus són a l'HTML.
    ============================================================ */
 
-/* Zona dreta de la capçalera: bàner de convocatòria (si es mostra) i botó
-   "Sessions i tarifes", a la mateixa alçada que el menú */
+/* Segona línia de la capçalera, centrada: bàner de convocatòria i botó
+   "Sessions i tarifes". Només apareix a BEAUTY (i a /sessions i
+   /sessions-becades), que és on arriba studio.nophotis.com. */
 .header-dreta {
-    margin-left: auto;
-    align-self: center;
+    flex-basis: 100%;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 10px 14px;
-    padding-left: 20px;
 }
 
 .menu-sessions {
@@ -451,13 +519,9 @@ footer a:hover {
         flex: 1 1 0;
         min-width: 0;
     }
-    .header-dreta {
-        flex-basis: 100%;
-        padding-left: 0;
-    }
     .convocatoria-banner {
         white-space: normal;
-        text-align: right;
+        text-align: center;
     }
 }
 
