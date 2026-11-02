@@ -170,10 +170,12 @@ main {
      'modular'   -> grid asimètric amb punts focals (lògica a script.js)
    script.js afegeix la classe `mosaic-<tipus>` al <body>; els blocs de sota
    defineixen l'estil de cada tipus. Per afegir-ne un de nou, crea un bloc
-   `.mosaic-<nom> #gallery .grid { ... }` seguint el mateix patró.
+   `.mosaic-<nom> #gallery .grid-batch { ... }` seguint el mateix patró.
+   Les fotos es carreguen per grups: cada grup és un .grid-batch dins del
+   .grid, i el layout del mosaic s'aplica a cada .grid-batch.
    ============================================================ */
 
-#gallery .grid {
+#gallery .grid-batch {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -209,7 +211,7 @@ main {
    una mida semblant (per alçada) en lloc que l'horitzontal surti molt més
    petita. Centrada perquè la darrera fila (incompleta) no quedi despenjada
    a l'esquerra. ---- */
-.mosaic-justified #gallery .grid {
+.mosaic-justified #gallery .grid-batch {
     justify-content: center;
 }
 
@@ -235,7 +237,7 @@ main {
 }
 
 /* ---- columns: mosaic clàssic per columnes ---- */
-.mosaic-columns #gallery .grid {
+.mosaic-columns #gallery .grid-batch {
     display: block;
     columns: 280px;
     column-gap: 10px;
@@ -259,7 +261,7 @@ main {
    fotos reben una columna extra com a punt focal. L'alçada resultant es
    calcula a partir de l'alçada renderitzada, perquè la imatge s'hi ajusti
    exactament sense retallar-se ni deixar marge negre. ---- */
-.mosaic-modular #gallery .grid {
+.mosaic-modular #gallery .grid-batch {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     grid-auto-rows: 10px;
@@ -282,6 +284,20 @@ main {
 .mosaic-modular main {
     max-width: 2000px;
     margin: 0 auto;
+}
+
+/* Separador entre grups de fotos (script.js les carrega per grups de 12) */
+.grid-separator {
+    width: 60px;
+    height: 1px;
+    margin: 28px auto;
+    background-color: #444;
+}
+
+/* Marca invisible al final de la galeria: script.js l'observa per demanar
+   el grup de fotos següent quan l'usuari s'hi acosta fent scroll */
+.grid-sentinel {
+    height: 1px;
 }
 
 /* Estils per al nom del fitxer sota cada imatge del grid */

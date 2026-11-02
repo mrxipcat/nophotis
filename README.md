@@ -17,7 +17,7 @@ Tot és text pla dins de l'HTML; no hi ha cap fitxer de dades.
 
 **Tancar-la** – fes el mateix a la inversa. No es tanca sola: s'ha de fer a mà.
 
-**Com arriben les candidatures** – no hi ha formulari: `sessions-becades/index.html` explica que s'envien per correu a nophotis@nophotis.com i llista les dades i fotos que cal incloure.
+**Com arriben les candidatures** – no hi ha formulari: `sessions-becades/index.html` explica que s'envien per correu a sessions@nophotis.com i llista les dades i fotos que cal incloure.
 
 ## Indexació a Google
 

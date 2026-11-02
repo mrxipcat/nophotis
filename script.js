@@ -429,17 +429,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    // Càrrega de la galeria sense "salts": primer es demanen totes les fotos
-    // i s'espera només a conèixer-ne les dimensions (el navegador les sap
-    // quan rep la capçalera del fitxer, molt abans de tenir la foto sencera).
-    // Llavors es col·loquen totes de cop al mosaic amb l'espai ja reservat, i
-    // cada foto apareix amb un fos quan acaba de descarregar-se. Així cap foto
-    // nova desplaça les que ja es veuen. Si alguna foto triga massa a donar
-    // les dimensions (xarxa lenta), es col·loquen les que ja estan a punt i
-    // les endarrerides s'afegeixen al final quan arriben.
+    // Càrrega de la galeria per grups de BATCH_SIZE fotos. Cada grup té el
+    // seu propi bloc (.grid-batch) dins del .grid, separat de l'anterior per
+    // un petit separador (.grid-separator). Dins de cada grup es manté la
+    // càrrega sense "salts": es demanen les fotos del grup i s'espera només a
+    // conèixer-ne les dimensions (el navegador les sap quan rep la capçalera
+    // del fitxer), llavors es col·loquen totes de cop amb l'espai ja reservat
+    // i cada foto apareix amb un fos quan acaba de descarregar-se. El grup
+    // següent només es demana quan es compleixen dues condicions:
+    //   1) l'actual ha acabat de descarregar-se (o ha passat BATCH_TIMEOUT_MS),
+    //      perquè cada grup tingui tota l'amplada de banda;
+    //   2) l'usuari s'acosta al final de la galeria: un sentinella invisible
+    //      al final del .grid és a menys d'una pantalla (LOOKAHEAD) de la part visible.
+    // Així no es descarreguen fotos que ningú no arriba a veure, però el grup
+    // següent ja està a punt abans que l'usuari hi arribi fent scroll. Com que
+    // cada grup és un bloc independent, les fotos noves mai no desplacen les
+    // que ja es veuen.
+    const BATCH_SIZE = 12;
+    const LOOKAHEAD = "100%"; // Una pantalla d'anticipació
     const DIMENSIONS_TIMEOUT_MS = 1500;
     const DIMENSIONS_POLL_MS = 40;
+    const BATCH_TIMEOUT_MS = 6000;
     let loadToken = 0;
+    let sentinelObserver = null;
 
     function loadImagesFromList(section) {
         const token = ++loadToken;
@@ -459,61 +471,142 @@ document.addEventListener('DOMContentLoaded', function () {
             [imageList[i], imageList[j]] = [imageList[j], imageList[i]];
         }
 
-        // Comença totes les descàrregues alhora
-        const entries = imageList.map(imageFile => {
-            const img = document.createElement('img');
-            const entry = { url: imagePath + imageFile, img, state: 'pending' };
-            img.addEventListener('load', () => img.classList.add('loaded'));
-            img.addEventListener('error', () => { entry.state = 'error'; });
-            img.src = entry.url;
-            return entry;
-        });
-
-        let placedInitialBatch = false;
         let placedCount = 0;
-        const startedAt = performance.now();
 
-        function place(entry) {
-            entry.state = 'placed';
-            images.push(entry.url);
-            addImageToGrid(entry, placedCount++);
+        // Sentinella al final de la galeria per saber quan l'usuari s'hi acosta
+        if (sentinelObserver) sentinelObserver.disconnect();
+        const sentinel = document.createElement('div');
+        sentinel.classList.add('grid-sentinel');
+        grid.appendChild(sentinel);
+        let sentinelNear = false;
+        let pendingBatchStart = null; // grup a punt per demanar, esperant scroll
+
+        // Es comprova la posició real del sentinella (no només l'últim avís de
+        // l'observador), perquè quan les fotos arriben molt de pressa l'avís
+        // pot no haver-se actualitzat encara després de col·locar un grup.
+        function sentinelIsNear() {
+            if (!sentinelNear) return false;
+            return sentinel.getBoundingClientRect().top <= window.innerHeight * (1 + parseFloat(LOOKAHEAD) / 100);
         }
 
-        function tick() {
+        function maybeLoadPending() {
+            if (pendingBatchStart === null || !sentinelIsNear()) return;
+            const next = pendingBatchStart;
+            pendingBatchStart = null;
+            loadBatch(next);
+        }
+
+        if ('IntersectionObserver' in window) {
+            sentinelObserver = new IntersectionObserver(observed => {
+                if (token !== loadToken) return;
+                sentinelNear = observed[observed.length - 1].isIntersecting;
+                maybeLoadPending();
+            }, { rootMargin: `0px 0px ${LOOKAHEAD} 0px` });
+            sentinelObserver.observe(sentinel);
+        } else {
+            sentinelNear = true; // Navegadors antics: es decideix només per la posició: càrrega seqüencial sense esperar scroll
+        }
+
+        function loadBatch(batchStart) {
             if (token !== loadToken) return; // L'usuari ha canviat de secció
+            if (batchStart >= imageList.length) return;
 
-            entries.forEach(entry => {
-                if (entry.state === 'pending' && entry.img.naturalWidth > 0) {
-                    entry.state = 'ready';
-                }
-            });
+            const batchFiles = imageList.slice(batchStart, batchStart + BATCH_SIZE);
+            let batchEl = null;
+            let nextStarted = false;
 
-            const stillPending = entries.some(e => e.state === 'pending');
-
-            if (!placedInitialBatch) {
-                const timedOut = performance.now() - startedAt > DIMENSIONS_TIMEOUT_MS;
-                if (stillPending && !timedOut) {
-                    setTimeout(tick, DIMENSIONS_POLL_MS);
-                    return;
-                }
-                placedInitialBatch = true;
+            // El grup està enllestit quan totes les fotos s'han descarregat (o
+            // han fallat) i ja són col·locades a la pàgina: només llavors la
+            // posició del sentinella reflecteix l'alçada real del grup.
+            function tryStartNextBatch() {
+                const settled = entries.every(e => e.done && (e.state === 'placed' || e.state === 'error'));
+                if (settled) startNextBatch();
             }
 
-            // Col·loca (en l'ordre barrejat) totes les que ja tenen dimensions
-            entries.forEach(entry => {
-                if (entry.state === 'ready') place(entry);
-            });
+            function startNextBatch() {
+                if (nextStarted) return;
+                nextStarted = true;
+                if (token !== loadToken || batchStart + BATCH_SIZE >= imageList.length) return;
+                pendingBatchStart = batchStart + BATCH_SIZE;
+                maybeLoadPending();
+            }
 
-            if (stillPending) setTimeout(tick, DIMENSIONS_POLL_MS * 4);
+            // Comença les descàrregues del grup
+            const entries = batchFiles.map(imageFile => {
+                const img = document.createElement('img');
+                const entry = { url: imagePath + imageFile, img, state: 'pending', done: false };
+                const finish = () => {
+                    entry.done = true;
+                    tryStartNextBatch();
+                };
+                img.addEventListener('load', () => { img.classList.add('loaded'); finish(); });
+                img.addEventListener('error', () => { entry.state = 'error'; finish(); });
+                img.decoding = 'async';
+                // El primer grup és el que es veu en obrir la pàgina: prioritat alta
+                if (batchStart === 0) img.fetchPriority = 'high';
+                img.src = entry.url;
+                return entry;
+            });
+            setTimeout(() => { if (token === loadToken) startNextBatch(); }, BATCH_TIMEOUT_MS);
+
+            let placedInitial = false;
+            const startedAt = performance.now();
+
+            function place(entry) {
+                if (!batchEl) {
+                    if (batchStart > 0) {
+                        const separator = document.createElement('div');
+                        separator.classList.add('grid-separator');
+                        grid.insertBefore(separator, sentinel);
+                    }
+                    batchEl = document.createElement('div');
+                    batchEl.classList.add('grid-batch');
+                    grid.insertBefore(batchEl, sentinel);
+                }
+                entry.state = 'placed';
+                images.push(entry.url);
+                addImageToGrid(entry, batchEl, placedCount++);
+            }
+
+            function tick() {
+                if (token !== loadToken) return;
+
+                entries.forEach(entry => {
+                    if (entry.state === 'pending' && entry.img.naturalWidth > 0) {
+                        entry.state = 'ready';
+                    }
+                });
+
+                const stillPending = entries.some(e => e.state === 'pending');
+
+                if (!placedInitial) {
+                    const timedOut = performance.now() - startedAt > DIMENSIONS_TIMEOUT_MS;
+                    if (stillPending && !timedOut) {
+                        setTimeout(tick, DIMENSIONS_POLL_MS);
+                        return;
+                    }
+                    placedInitial = true;
+                }
+
+                // Col·loca (en l'ordre barrejat) totes les que ja tenen dimensions
+                entries.forEach(entry => {
+                    if (entry.state === 'ready') place(entry);
+                });
+
+                if (stillPending) setTimeout(tick, DIMENSIONS_POLL_MS * 4);
+                tryStartNextBatch();
+            }
+
+            tick();
         }
 
-        tick();
+        loadBatch(0);
     }
 
     // Funció per afegir una imatge al grid. Les dimensions ja són conegudes:
     // es posen com a atributs width/height perquè el navegador reservi l'espai
     // exacte (aspect-ratio) abans que la foto acabi de descarregar-se.
-    function addImageToGrid(entry, index) {
+    function addImageToGrid(entry, container, index) {
         const { url: imageUrl, img } = entry;
         const gridItem = document.createElement('div');
         gridItem.classList.add('grid-item');
@@ -530,7 +623,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         gridItem.appendChild(img);
         gridItem.appendChild(imageNameGrid);
-        grid.appendChild(gridItem);
+        container.appendChild(gridItem);
 
         applyMasonryLayout(gridItem, img, index);
     }
@@ -548,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const MASONRY_WIDE_RATIO = 1.15;
 
     function getMasonryColumnCount() {
-        const columnCount = window.getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
+        const columnCount = window.getComputedStyle(grid.querySelector('.grid-batch') || grid).gridTemplateColumns.split(' ').filter(Boolean).length;
         return columnCount || 1;
     }
 
