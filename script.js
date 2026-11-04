@@ -221,7 +221,8 @@ const imageLists = {
 "202609_DSC06003IES.jpg",
 "202609_DSC07566IES.jpg",
 "202609_DSC07647IES.jpg",
-"202609_DSC08587IES.jpg"
+"202609_DSC08587IES.jpg",
+"202610_DSC09874S.jpg"
 ],
 
     "StudioOutdoor": [
