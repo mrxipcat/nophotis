@@ -647,6 +647,68 @@ nav a:focus-visible,
     border-color: #ccc;
 }
 
+/* Línia solitària sota les targetes de serveis (polas soles) */
+.serveis-extra {
+    margin: 16px 0 0;
+    color: #ccc;
+}
+
+/* Plataformes (Litmind, Apreia), abans de Serveis */
+.plataformes-intro {
+    margin: 0 0 14px;
+    color: #ccc;
+}
+
+.plataformes-llista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+@media (min-width: 640px) {
+    .plataformes-llista {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.plataformes-llista a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 12px 16px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #ccc;
+    transition: border-color 0.2s ease;
+}
+
+.plataformes-llista a:hover,
+.plataformes-llista a:focus-visible {
+    border-color: #888;
+}
+
+.plataformes-llista img {
+    flex: 0 0 auto;
+    width: 40px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.plataformes-llista strong {
+    display: block;
+    color: #fff;
+    font-size: 15px;
+}
+
 /* Targetes de serveis: una columna al mòbil, 2–3 a escriptori */
 .serveis-grid {
     display: grid;
@@ -715,8 +777,9 @@ nav a:focus-visible,
 
 /* Bloc de becades: diferenciat però sobri */
 .becades-bloc {
-    background-color: #151515;
-    border: 1px solid #444;
+    /* Blau fosc del mateix to que el botó "Sessions i tarifes" (#1f51ff) */
+    background-color: #0d1638;
+    border: 1px solid rgba(31, 81, 255, 0.55);
     border-radius: 10px;
     padding: 4px 20px 20px;
     margin-top: 40px;
