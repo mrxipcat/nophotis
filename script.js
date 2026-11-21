@@ -714,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // DEBUG-TEMP: registre de mides per diagnosticar Safari (?debug)
     const DEBUG_FIT = /[?&]debug\b/.test(location.search);
-    const DEBUG_VERSION = 'v20261121c';
+    const DEBUG_VERSION = 'v20261121d';
     function debugFit(tag, extra) {
         if (!DEBUG_FIT) return;
         const r = fullImage.getBoundingClientRect();
@@ -748,6 +748,17 @@ document.addEventListener('DOMContentLoaded', function () {
             ` style=${data.styleWH.join('x')} css=${data.csWH.slice(0, 2).join('x')} img=${data.imgRect.join('x')}` +
             ` box=${data.boxRect.join('x')} win=${data.win.join('x')} vis=${fullImage.style.visibility}`;
         panel.textContent = (line + '\n' + panel.textContent).split('\n').slice(0, 12).join('\n');
+    }
+
+    if (DEBUG_FIT) {
+        // Mostra el panell de seguida, per confirmar quina versió s'executa
+        const p = document.createElement('pre');
+        p.id = 'debug-fit';
+        p.style.cssText = 'position:fixed;left:0;bottom:0;z-index:2000;margin:0;padding:6px;' +
+            'max-width:100vw;max-height:40vh;overflow:auto;background:rgba(0,0,0,.85);color:#0f0;' +
+            'font:11px/1.3 monospace;white-space:pre-wrap;pointer-events:none';
+        p.textContent = `${DEBUG_VERSION} debug actiu - obre una foto`;
+        document.body.appendChild(p);
     }
 
     function fitFullImage() {
