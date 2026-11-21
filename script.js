@@ -703,14 +703,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // Funció per mostrar la imatge a pantalla completa
     // La mida de la foto en gran es calcula explícitament a partir de les
     // dimensions reals del fitxer i de l'espai del contenidor (sense superar
-    // mai la resolució original). Deixar-ho només a max-width/max-height dins
-    // d'un contenidor flex feia que, de vegades (segons la foto anterior i el
-    // navegador), es reaprofités la mida calculada per a la foto prèvia i la
-    // nova es mostrés molt petita amb object-fit: contain.
+    // mai la resolució original).
+    // Les dimensions s'obtenen d'un objecte Image propi de cada foto, NO de
+    // fullImage.naturalWidth: just després de canviar el src, alguns
+    // navegadors encara retornen les dimensions de la foto ANTERIOR (amb
+    // complete = true), i llavors una foto horitzontal que venia després d'una
+    // de vertical s'encaixava a la caixa de la vertical i es veia molt petita.
+    let fullDims = null;   // {w, h} de la foto que hi ha a fullImage
+    let fullLoadToken = 0; // Descarta càrregues d'una foto que ja no és l'actual
+
     function fitFullImage() {
-        const w = fullImage.naturalWidth;
-        const h = fullImage.naturalHeight;
-        if (!w || !h || fullImageView.style.display !== 'flex') return;
+        if (!fullDims || fullImageView.style.display !== 'flex') return;
+        const { w, h } = fullDims;
         const box = fullImageContainer.getBoundingClientRect();
         const scale = Math.min(1, box.width / w, box.height / h);
         fullImage.style.width = `${Math.floor(w * scale)}px`;
@@ -718,11 +722,6 @@ document.addEventListener('DOMContentLoaded', function () {
         fullImage.style.visibility = 'visible';
     }
 
-    fullImage.addEventListener('load', fitFullImage);
-    fullImage.addEventListener('error', () => {
-        fullImage.style.visibility = 'visible';
-        if (currentImageUrl) failedImages.add(currentImageUrl); // No la tornis a oferir
-    });
     window.addEventListener('resize', fitFullImage);
 
     // Ordre de navegació del visor: primer les fotos tal com surten al
@@ -736,14 +735,30 @@ document.addEventListener('DOMContentLoaded', function () {
         currentImageUrl = imageUrl;
         fullImageView.style.display = 'flex';
         const url = new URL(imageUrl, document.baseURI).href;
-        if (fullImage.src !== url) {
+        imageName.textContent = imageUrl.split('/').pop().split('.')[0];
+        if (fullImage.src === url && fullDims) {
+            fitFullImage();
+        } else {
             // Amaga la foto anterior mentre la nova no té dimensions conegudes
+            const token = ++fullLoadToken;
+            fullDims = null;
             fullImage.removeAttribute('style');
             fullImage.style.visibility = 'hidden';
-            fullImage.src = url;
+            const loader = new Image();
+            loader.onload = () => {
+                if (token !== fullLoadToken) return;
+                fullDims = { w: loader.naturalWidth, h: loader.naturalHeight };
+                fullImage.src = url; // Ja és a la memòria cau
+                fitFullImage();
+            };
+            loader.onerror = () => {
+                if (token !== fullLoadToken) return;
+                fullImage.src = url;
+                fullImage.style.visibility = 'visible';
+                failedImages.add(imageUrl); // No la tornis a oferir
+            };
+            loader.src = url;
         }
-        imageName.textContent = imageUrl.split('/').pop().split('.')[0];
-        if (fullImage.complete && fullImage.naturalWidth) fitFullImage();
         preloadAdjacent();
     }
 
