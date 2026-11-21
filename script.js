@@ -712,6 +712,44 @@ document.addEventListener('DOMContentLoaded', function () {
     let fullDims = null;   // {w, h} de la foto que hi ha a fullImage
     let fullLoadToken = 0; // Descarta càrregues d'una foto que ja no és l'actual
 
+    // DEBUG-TEMP: registre de mides per diagnosticar Safari (?debug)
+    const DEBUG_FIT = /[?&]debug\b/.test(location.search);
+    const DEBUG_VERSION = 'v20261121c';
+    function debugFit(tag, extra) {
+        if (!DEBUG_FIT) return;
+        const r = fullImage.getBoundingClientRect();
+        const c = fullImageContainer.getBoundingClientRect();
+        const cs = getComputedStyle(fullImage);
+        const data = Object.assign({
+            tag, cur: (currentImageUrl || '').split('/').pop(),
+            src: fullImage.src.split('/').pop(),
+            fullDims, nat: [fullImage.naturalWidth, fullImage.naturalHeight],
+            complete: fullImage.complete,
+            styleWH: [fullImage.style.width, fullImage.style.height],
+            csWH: [cs.width, cs.height, cs.maxWidth, cs.maxHeight],
+            imgRect: [Math.round(r.width), Math.round(r.height)],
+            boxRect: [Math.round(c.width), Math.round(c.height)],
+            win: [innerWidth, innerHeight, devicePixelRatio]
+        }, extra || {});
+        if (location.hostname === '127.0.0.1') {
+            try { navigator.sendBeacon('/__log', JSON.stringify(data)); } catch (e) {}
+        }
+        let panel = document.getElementById('debug-fit');
+        if (!panel) {
+            panel = document.createElement('pre');
+            panel.id = 'debug-fit';
+            panel.style.cssText = 'position:fixed;left:0;bottom:0;z-index:2000;margin:0;padding:6px;' +
+                'max-width:100vw;max-height:40vh;overflow:auto;background:rgba(0,0,0,.85);color:#0f0;' +
+                'font:11px/1.3 monospace;white-space:pre-wrap;pointer-events:none';
+            document.body.appendChild(panel);
+        }
+        const line = `${DEBUG_VERSION} ${tag} cur=${data.cur} src=${data.src} dims=${fullDims ? fullDims.w + 'x' + fullDims.h : '-'}` +
+            ` nat=${data.nat.join('x')} loader=${extra && extra.loaderNat ? extra.loaderNat.join('x') : '-'}` +
+            ` style=${data.styleWH.join('x')} css=${data.csWH.slice(0, 2).join('x')} img=${data.imgRect.join('x')}` +
+            ` box=${data.boxRect.join('x')} win=${data.win.join('x')} vis=${fullImage.style.visibility}`;
+        panel.textContent = (line + '\n' + panel.textContent).split('\n').slice(0, 12).join('\n');
+    }
+
     function fitFullImage() {
         if (!fullDims || fullImageView.style.display !== 'flex') return;
         const { w, h } = fullDims;
@@ -720,6 +758,11 @@ document.addEventListener('DOMContentLoaded', function () {
         fullImage.style.width = `${Math.floor(w * scale)}px`;
         fullImage.style.height = `${Math.floor(h * scale)}px`;
         fullImage.style.visibility = 'visible';
+        debugFit('fit', { scale });
+        if (DEBUG_FIT) {
+            requestAnimationFrame(() => debugFit('fit+raf'));
+            setTimeout(() => debugFit('fit+800ms'), 800);
+        }
     }
 
     window.addEventListener('resize', fitFullImage);
@@ -746,6 +789,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fullImage.style.visibility = 'hidden';
             const loader = new Image();
             loader.onload = () => {
+                debugFit('loader', { url: url.split('/').pop(), loaderNat: [loader.naturalWidth, loader.naturalHeight], stale: token !== fullLoadToken });
                 if (token !== fullLoadToken) return;
                 fullDims = { w: loader.naturalWidth, h: loader.naturalHeight };
                 fullImage.src = url; // Ja és a la memòria cau
