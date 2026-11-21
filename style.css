@@ -334,6 +334,7 @@ main {
     position: relative;
     width: 90%; /* Canviat max-width per width */
     height: 90vh; /* Canviat max-height per height i usant vh */
+    min-width: 0; /* Que la mida de la foto no condicioni la del contenidor (script.js el mesura) */
     display: flex;
     align-items: center;
     justify-content: center;

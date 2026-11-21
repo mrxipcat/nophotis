@@ -410,13 +410,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.add(`mosaic-${mosaicType}`);
 
     let currentSection = window.DEFAULT_SECTION || 'Homepage';
-    let images = [];
-    let currentImageIndex = 0;
+    let images = [];          // Fotos ja col·locades al mosaic, en ordre
+    let sectionImages = [];   // Totes les fotos de la secció (ordre barrejat)
+    const failedImages = new Set();
+    let currentImageUrl = null;
 
     function loadImages(section) {
         currentSection = section;
         grid.innerHTML = '';
         images = [];
+        sectionImages = [];
         fullImageView.style.display = 'none';
         loadImagesFromList(section);
         updateActiveMenuLink(section);
@@ -471,6 +474,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const j = Math.floor(Math.random() * (i + 1));
             [imageList[i], imageList[j]] = [imageList[j], imageList[i]];
         }
+
+        // El visor 1 a 1 recorre totes les fotos de la secció, no només
+        // les dels grups que ja s'han carregat fent scroll
+        sectionImages = imageList.map(imageFile => imagePath + imageFile);
 
         let placedCount = 0;
 
@@ -541,7 +548,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     tryStartNextBatch();
                 };
                 img.addEventListener('load', () => { img.classList.add('loaded'); finish(); });
-                img.addEventListener('error', () => { entry.state = 'error'; finish(); });
+                img.addEventListener('error', () => { entry.state = 'error'; failedImages.add(entry.url); finish(); });
                 img.decoding = 'async';
                 // El primer grup és el que es veu en obrir la pàgina: prioritat alta
                 if (batchStart === 0) img.fetchPriority = 'high';
@@ -615,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function () {
         img.width = img.naturalWidth;
         img.height = img.naturalHeight;
         img.alt = imageUrl.split('/').pop().split('.')[0];
-        img.addEventListener('click', () => showFullImage(images.indexOf(imageUrl)));
+        img.addEventListener('click', () => showFullImage(imageUrl));
         if (img.complete) img.classList.add('loaded');
 
         const imageNameGrid = document.createElement('div');
@@ -694,23 +701,79 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Funció per mostrar la imatge a pantalla completa
-    function showFullImage(index) {
-        currentImageIndex = index;
-        fullImage.src = images[index];
-        imageName.textContent = images[index].split('/').pop().split('.')[0];
+    // La mida de la foto en gran es calcula explícitament a partir de les
+    // dimensions reals del fitxer i de l'espai del contenidor (sense superar
+    // mai la resolució original). Deixar-ho només a max-width/max-height dins
+    // d'un contenidor flex feia que, de vegades (segons la foto anterior i el
+    // navegador), es reaprofités la mida calculada per a la foto prèvia i la
+    // nova es mostrés molt petita amb object-fit: contain.
+    function fitFullImage() {
+        const w = fullImage.naturalWidth;
+        const h = fullImage.naturalHeight;
+        if (!w || !h || fullImageView.style.display !== 'flex') return;
+        const box = fullImageContainer.getBoundingClientRect();
+        const scale = Math.min(1, box.width / w, box.height / h);
+        fullImage.style.width = `${Math.floor(w * scale)}px`;
+        fullImage.style.height = `${Math.floor(h * scale)}px`;
+        fullImage.style.visibility = 'visible';
+    }
+
+    fullImage.addEventListener('load', fitFullImage);
+    fullImage.addEventListener('error', () => {
+        fullImage.style.visibility = 'visible';
+        if (currentImageUrl) failedImages.add(currentImageUrl); // No la tornis a oferir
+    });
+    window.addEventListener('resize', fitFullImage);
+
+    // Ordre de navegació del visor: primer les fotos tal com surten al
+    // mosaic i després les que encara no s'han carregat (en l'ordre barrejat)
+    function viewerImages() {
+        const placed = new Set(images);
+        return images.concat(sectionImages.filter(u => !placed.has(u) && !failedImages.has(u)));
+    }
+
+    function showFullImage(imageUrl) {
+        currentImageUrl = imageUrl;
         fullImageView.style.display = 'flex';
+        const url = new URL(imageUrl, document.baseURI).href;
+        if (fullImage.src !== url) {
+            // Amaga la foto anterior mentre la nova no té dimensions conegudes
+            fullImage.removeAttribute('style');
+            fullImage.style.visibility = 'hidden';
+            fullImage.src = url;
+        }
+        imageName.textContent = imageUrl.split('/').pop().split('.')[0];
+        if (fullImage.complete && fullImage.naturalWidth) fitFullImage();
+        preloadAdjacent();
+    }
+
+    // Avança 'step' posicions (+1 / -1) des de la foto actual
+    function stepImage(step) {
+        const list = viewerImages();
+        if (list.length === 0) return null;
+        const i = list.indexOf(currentImageUrl);
+        return list[((i < 0 ? 0 : i) + step + list.length) % list.length];
+    }
+
+    // Precarrega l'anterior i la següent perquè la navegació sigui fluida,
+    // també quan són fotos que el mosaic encara no ha descarregat
+    function preloadAdjacent() {
+        [1, -1].forEach(step => {
+            const url = stepImage(step);
+            if (url && url !== currentImageUrl) new Image().src = url;
+        });
     }
 
     // Funció per mostrar la imatge anterior
     function showPreviousImage() {
-        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-        showFullImage(currentImageIndex);
+        const url = stepImage(-1);
+        if (url) showFullImage(url);
     }
 
     // Funció per mostrar la imatge següent
     function showNextImage() {
-        currentImageIndex = (currentImageIndex + 1) % images.length;
-        showFullImage(currentImageIndex);
+        const url = stepImage(1);
+        if (url) showFullImage(url);
     }
 
     // Funció per tancar la vista en gran
