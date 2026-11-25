@@ -701,28 +701,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Funció per mostrar la imatge a pantalla completa
-    // La mida de la foto en gran es calcula explícitament a partir de les
-    // dimensions reals del fitxer i de l'espai del contenidor (sense superar
-    // mai la resolució original).
-    // Les dimensions s'obtenen d'un objecte Image propi de cada foto, NO de
-    // fullImage.naturalWidth: just després de canviar el src, alguns
-    // navegadors encara retornen les dimensions de la foto ANTERIOR (amb
-    // complete = true), i llavors una foto horitzontal que venia després d'una
-    // de vertical s'encaixava a la caixa de la vertical i es veia molt petita.
-    let fullDims = null;   // {w, h} de la foto que hi ha a fullImage
+    // La mida de la foto en gran la decideix NOMÉS el CSS (#full-image ocupa
+    // tot el contenidor amb object-fit: contain). No es calcula res a partir
+    // de naturalWidth/naturalHeight: el Safari pot retornar dimensions d'una
+    // foto anterior o incorrectes, i llavors algunes fotos horitzontals es
+    // veien massa petites. Així cada foto omple sempre l'espai disponible.
     let fullLoadToken = 0; // Descarta càrregues d'una foto que ja no és l'actual
-
-    function fitFullImage() {
-        if (!fullDims || fullImageView.style.display !== 'flex') return;
-        const { w, h } = fullDims;
-        const box = fullImageContainer.getBoundingClientRect();
-        const scale = Math.min(1, box.width / w, box.height / h);
-        fullImage.style.width = `${Math.floor(w * scale)}px`;
-        fullImage.style.height = `${Math.floor(h * scale)}px`;
-        fullImage.style.visibility = 'visible';
-    }
-
-    window.addEventListener('resize', fitFullImage);
 
     // Ordre de navegació del visor: primer les fotos tal com surten al
     // mosaic i després les que encara no s'han carregat (en l'ordre barrejat)
@@ -736,25 +720,19 @@ document.addEventListener('DOMContentLoaded', function () {
         fullImageView.style.display = 'flex';
         const url = new URL(imageUrl, document.baseURI).href;
         imageName.textContent = imageUrl.split('/').pop().split('.')[0];
-        if (fullImage.src === url && fullDims) {
-            fitFullImage();
-        } else {
-            // Amaga la foto anterior mentre la nova no té dimensions conegudes
+        if (fullImage.src !== url) {
+            // Amaga la foto anterior mentre la nova es descarrega
             const token = ++fullLoadToken;
-            fullDims = null;
-            fullImage.removeAttribute('style');
             fullImage.style.visibility = 'hidden';
             const loader = new Image();
-            loader.onload = () => {
+            const swap = () => {
                 if (token !== fullLoadToken) return;
-                fullDims = { w: loader.naturalWidth, h: loader.naturalHeight };
                 fullImage.src = url; // Ja és a la memòria cau
-                fitFullImage();
-            };
-            loader.onerror = () => {
-                if (token !== fullLoadToken) return;
-                fullImage.src = url;
                 fullImage.style.visibility = 'visible';
+            };
+            loader.onload = swap;
+            loader.onerror = () => {
+                swap();
                 failedImages.add(imageUrl); // No la tornis a oferir
             };
             loader.src = url;

@@ -342,9 +342,19 @@ main {
 
 
 #full-image {
+    /* La mida la decideix només el CSS (no JS ni naturalWidth, que al Safari
+       donava mides errònies). Amb posició absoluta, inset 0 i margin auto, i
+       amplada/alçada auto, la foto es mostra a la seva mida original (100%)
+       i només es redueix, mantenint la proporció, si no cap al contenidor.
+       Mai s'amplia per sobre del 100%. */
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    display: block;
+    width: auto;
+    height: auto;
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
 }
 
 #image-name {
