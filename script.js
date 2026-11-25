@@ -701,12 +701,58 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Funció per mostrar la imatge a pantalla completa
-    // La mida de la foto en gran la decideix NOMÉS el CSS (#full-image ocupa
-    // tot el contenidor amb object-fit: contain). No es calcula res a partir
-    // de naturalWidth/naturalHeight: el Safari pot retornar dimensions d'una
-    // foto anterior o incorrectes, i llavors algunes fotos horitzontals es
-    // veien massa petites. Així cada foto omple sempre l'espai disponible.
+    // La mida de la foto es mostra com a màxim al 100% de la seva resolució
+    // real i es redueix només si no cap al contenidor.
+    // La resolució real es llegeix de la capçalera del propi fitxer JPEG
+    // (marcador SOF), NO de naturalWidth/naturalHeight: el Safari, de forma
+    // aleatòria segons l'ordre de càrrega, retorna mides errònies (corregides
+    // pels ppp de l'EXIF o fins i tot d'una altra foto), i llavors algunes
+    // fotos horitzontals es veien massa petites.
     let fullLoadToken = 0; // Descarta càrregues d'una foto que ja no és l'actual
+    let fullDims = null;   // {w, h} reals de la foto que hi ha a fullImage
+    const jpegSizeCache = new Map();
+
+    function parseJpegSize(buf) {
+        const d = new DataView(buf);
+        if (d.byteLength < 4 || d.getUint16(0) !== 0xFFD8) return null;
+        let i = 2;
+        while (i + 9 < d.byteLength) {
+            if (d.getUint8(i) !== 0xFF) { i++; continue; }
+            const marker = d.getUint8(i + 1);
+            if (marker === 0xFF) { i++; continue; }          // farciment
+            if (marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) { i += 2; continue; }
+            const len = d.getUint16(i + 2);
+            // SOF0..SOF15 excepte DHT (C4), JPG (C8) i DAC (CC)
+            if (marker >= 0xC0 && marker <= 0xCF && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC) {
+                return { h: d.getUint16(i + 5), w: d.getUint16(i + 7) };
+            }
+            if (marker === 0xDA || marker === 0xD9) return null; // inici de dades sense SOF
+            i += 2 + len;
+        }
+        return null;
+    }
+
+    function getJpegSize(url) {
+        if (!jpegSizeCache.has(url)) {
+            const p = fetch(url, { cache: 'force-cache' })
+                .then(r => r.ok ? r.arrayBuffer() : null)
+                .then(buf => buf ? parseJpegSize(buf) : null)
+                .catch(() => null);
+            jpegSizeCache.set(url, p);
+        }
+        return jpegSizeCache.get(url);
+    }
+
+    function fitFullImage() {
+        if (!fullDims || fullImageView.style.display !== 'flex') return;
+        const { w, h } = fullDims;
+        const box = fullImageContainer.getBoundingClientRect();
+        const scale = Math.min(1, box.width / w, box.height / h);
+        fullImage.style.width = `${Math.floor(w * scale)}px`;
+        fullImage.style.height = `${Math.floor(h * scale)}px`;
+    }
+
+    window.addEventListener('resize', fitFullImage);
 
     // Ordre de navegació del visor: primer les fotos tal com surten al
     // mosaic i després les que encara no s'han carregat (en l'ordre barrejat)
@@ -720,22 +766,34 @@ document.addEventListener('DOMContentLoaded', function () {
         fullImageView.style.display = 'flex';
         const url = new URL(imageUrl, document.baseURI).href;
         imageName.textContent = imageUrl.split('/').pop().split('.')[0];
-        if (fullImage.src !== url) {
-            // Amaga la foto anterior mentre la nova es descarrega
+        if (fullImage.src === url && fullDims) {
+            fitFullImage();
+        } else {
+            // Amaga la foto anterior mentre la nova es descarrega i se'n
+            // llegeix la mida real
             const token = ++fullLoadToken;
+            fullDims = null;
             fullImage.style.visibility = 'hidden';
-            const loader = new Image();
-            const swap = () => {
+            const loaded = new Promise(resolve => {
+                const loader = new Image();
+                loader.onload = () => resolve(true);
+                loader.onerror = () => resolve(false);
+                loader.src = url;
+            });
+            Promise.all([loaded, getJpegSize(url)]).then(([ok, dims]) => {
                 if (token !== fullLoadToken) return;
+                if (!ok) failedImages.add(imageUrl); // No la tornis a oferir
+                fullDims = dims;
+                if (dims) {
+                    fitFullImage();
+                } else {
+                    // Sense mida coneguda: el CSS l'encaixa al contenidor
+                    fullImage.style.width = '';
+                    fullImage.style.height = '';
+                }
                 fullImage.src = url; // Ja és a la memòria cau
                 fullImage.style.visibility = 'visible';
-            };
-            loader.onload = swap;
-            loader.onerror = () => {
-                swap();
-                failedImages.add(imageUrl); // No la tornis a oferir
-            };
-            loader.src = url;
+            });
         }
         preloadAdjacent();
     }
