@@ -9,6 +9,7 @@ const MOSAIC_DEFAULT = 'justified';
 const imageLists = {
     "Homepage": [
 "201808_Yellow.jpg",
+"202302_DSC_0157S.jpg",
 "202302_Green.jpg",
 "202304_Blue.jpg",
 "202312_Orange.jpg",
@@ -20,8 +21,9 @@ const imageLists = {
 "202603_R-DSC08696ES.jpg",
 "202605_R-DSC03046CES.jpg",
 "202607_R-DSC06705IES.jpg",
-"202608_R-DSC05099IES.jpg",
-"202609_DSC08076BES.jpg"
+"202609_DSC07647IES.jpg",
+"202609_DSC08076BES.jpg",
+"202610_DSC09874S.jpg"
 ],
 
     "Landscapes": [
@@ -41,7 +43,6 @@ const imageLists = {
 "202006_Menorca.jpg",
 "202008_Asturies.jpg",
 "202108_Cadiz.jpg",
-"202302_DSC_0157S.jpg",
 "202302_R-DSC_7828S.jpg",
 "202302_R-DSC10910S.jpg",
 "202308_Fecamp.jpg",
